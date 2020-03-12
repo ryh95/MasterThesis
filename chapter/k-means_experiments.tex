@@ -1,0 +1,14 @@
+\section{实验}
+在“基于均匀采样算法的新理论结果”一节中，我们证明了基于均匀不放回采样的算法\ref{alg: uniform_k-means}有更紧的理论界且在一定的数据假设下可以在多项式对数时间复杂度下取得常数近似的解。在本节，我们设计实验验证这一点，接受测试的算法分别是基于均匀不放回采样的算法(\ref{alg: uniform_k-means})，K-M$\text{C}^2$(\ref{alg:K-MC^2 seeding})和我们自己提出的一个新算法Double-K-M$\text{C}^2$，这一新算法描述见算法\ref{alg:Re-K-MC sampling}。这一算法提出的初衷是为了估算算法\ref{alg: reduce_k-means2}中点$s_i$上的权重$w_i$。容易知道计算准确权重需要$O(nsd)$的时间复杂度，大数据下时间复杂度太高，因此，新想法是利用一种采样算法，比如K-M$\text{C}^2$来估算权重，减少时间开销，$w_i + 1$是因为有的$w_i$可能是0，Double-K-M$\text{C}^2$中采样部分的时间复杂度是$O(us^2 d)$。
+% 估算方法不太对，应该乘以n/s
+\begin{algorithm}
+    \caption{Double-K-M$\text{C}^2$}\label{alg:Re-K-MC sampling}
+    \KwIn{数据集$\mathcal{X}$，采样数目$s$，游走次数$u$，聚类算法$\mathcal{A}_c$，类数目$k$}
+    \KwOut{$k$个点$C$}
+    $S_1 \gets$ 从$\mathcal{X}$中用K-M$\text{C}^2$采样$s$个点 \\
+    $\mathcal{X}' \gets $ 从$\mathcal{X}$中移除$S_1$ \\
+    $S_2 \gets$ 从$\mathcal{X}'$中用K-M$\text{C}^2$采样$s$个点 \\
+    对$S_1$中任意点$s_i$，令$w_i$是$S_2$中离$s_i$最近的点的数目 \\
+    $C \gets$ 令$w_i + 1$是$s_i$的权重，在带权的$S_1$上运行一个$\alpha$近似的算法$\mathcal{A}_c$ \\
+    \textbf{返回} $C$
+\end{algorithm}

@@ -98,7 +98,7 @@
 \RequirePackage[normalem]{ulem}
 \RequirePackage{enumitem}
 
-\RequirePackage[algochapter, boxruled, linesnumbered]{algorithm2e}
+\RequirePackage[algochapter, ruled, linesnumbered]{algorithm2e}
 
 \RequirePackage{etoolbox}
 \RequirePackage{newfloat}

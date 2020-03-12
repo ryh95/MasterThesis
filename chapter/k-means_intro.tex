@@ -1,0 +1,27 @@
+\chapter{\texorpdfstring{$k$}{k}-means聚类}
+本章聚焦$k$-means问题，前面已经提到解决该问题的一个经典算法Lloyd算法，由于文献\cite{garey1982complexity,kleinberg1998microeconomic,mahajan2009planar}指出$k$-means问题是NP难的，所以该算法准确来说是一个近似算法。前面提到，该算法收到初始点影响大，所以本章将首先探讨有理论保证的$k$-means问题的算法。其次，$O(nkdt)$的时间复杂度在海量数据下也难以处理，所以接着我们会探讨如何加速。然后，我们探讨如何将这两点都覆盖，最后我们给出我们的贡献并总结本章。
+
+\section{\texorpdfstring{$k$}{k}-means问题引入及背景知识}
+我们首先定义$k$-means问题，给定点$x \in \R^d$和集合$C \subseteq \R^d$，我们可以定义该点到集合的距离
+\begin{equation*}
+d(x,C) = \min\limits_{c \in C}\norm{x - c}
+\end{equation*}
+给定$n$个点的数据集$\mathcal{X} \subseteq \R^d$和集合$C \subseteq \R^d$，我们可以定义如下目标函数
+\begin{equation*}
+\varphi(\mathcal{X},C) = \sum_{x \in \mathcal{X}}d^2 (x,C)
+\end{equation*}
+我们的目标是在给定$n$个点$\mathcal{X}$情况下找到大小为$k$的集合$C_{\text{OPT}_k}^\mathcal{X}$使得该目标函数最小，即
+\begin{equation*}
+C_{\text{OPT}_k}^\mathcal{X} = \argmin\limits_{ \substack{C \subseteq \R^d \\ |C| = k} }\varphi(\mathcal{X},C)
+\end{equation*}
+上文谈到解的质量，这里给出如下定义用于定量评价解的质量。
+\begin{definition}[$k$-means问题解的质量]
+    \label{def: k-means_quality}
+    一个算法 $\mathcal{A}$被称为$k$-means问题的一个$\alpha$近似算法如果存在一个数字$\alpha \geq 1$使得
+    \begin{equation*}
+        \varphi(\mathcal{X},C) \leq \alpha \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation*}
+    成立，此时称解$C$为
+一个$\alpha$近似解，这里$\alpha$称为近似系数。
+\end{definition}
+从该定义可以看出， $\alpha$越小解质量越好，越接近最优解。

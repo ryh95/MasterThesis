@@ -1,14 +1,22 @@
 
 \documentclass[master]{thesis-uestc}
 
-\title{时域积分方程时间步进算法及其快速算法}{The Time Marching Scheme of Time Domain
-    Integral Equation and Corresponding Fast Algorithm}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\SetKwInput{KwIn}{输入}
+\SetKwInput{KwOut}{输出}
 
-\author{王稳}{Wang Wen}
-\advisor{赖生建\chinesespace 副教授}{Dr. Shengjian Lai}
-\school{物理电子学院}{School of Physical Electronics}
-\major{无线电物理}{Radio Physics}
-\studentnumber{201421040223}
+\title{面向大数据的扁平聚类算法研究}{Flat Clustering Algorithms for Big Data}
+
+\author{任远航}{Yuanhang Ren}
+\advisor{罗绪成\chinesespace 教授}{Prof. Xucheng Luo}
+\school{信息与软件工程学院}{School of Information and Software Engineering}
+\major{软件工程}{Software Engineering}
+\studentnumber{201721220117}
 
 % require all the usepackages here
 % \usepackage{algorithm2e}
@@ -28,17 +36,28 @@
 \thesistableofcontents
 
 % thesis contents
-\input{chapter/c1_exordium}
-\input{chapter/c2}
-\input{chapter/c3}
-\input{chapter/c4}
-\input{chapter/c5}
-%\input{chapter/template}
+\input{chapter/intro}
+\input{chapter/k-means_intro}
+\input{chapter/k-means_guarantee}
+\input{chapter/k-means_speedup}
+\input{chapter/k-means_guarantee_speedup}
+\input{chapter/k-means_contrib}
+\input{chapter/k-means_experiments}
+\input{chapter/k-means_conclusion}
+\input{chapter/spectral-clustering_intro}
+\input{chapter/spectral-clustering_speedup}
+\input{chapter/spectral-clustering_guarantee}
+\input{chapter/spectral-clustering_guarantee_speedup}
+\input{chapter/spectral-clustering_contrib}
+\input{chapter/spectral-clustering_experiments}
+\input{chapter/spectral-clustering_conclusion}
+\input{chapter/conclusion}
+
 
 % misc
 \input{misc/acknowledgement}
 
-\nocite{*}
+% \nocite{*}
 \thesisloadbibliography{reference}
 
 %
@@ -53,7 +72,7 @@
 % comment while no need
 \input{misc/appendix}
 \thesisloadaccomplish{publications}
-\input{misc/translate_original}
-\input{misc/translate_chinese}
+% \input{misc/translate_original}
+% \input{misc/translate_chinese}
 
 \end{document}

@@ -1,0 +1,180 @@
+\section{加速谱聚类}
+\subsection{Nyström 方法}
+Nyström 方法是一种半正定矩阵近似方法，可以有效近似半正定矩阵，该方法由文献\cite{williams2001using}引入到机器学习领域。其核心思想是：通过在原矩阵中采样部分列或者行，用这部分信息对原矩阵进行低秩近似。它也可以近似特征值和特征向量，通过分解大矩阵中小的子矩阵来近似大矩阵的特征值和特征向量，方法详解如下。
+假设我们有一个半正定矩阵$K \in \R^{n \times n}$，因为它是半正定，所以有
+\begin{equation*}
+    K = X^T X
+\end{equation*}
+可将$X$分块，$X=[R\quad S]$，$X \in \R^{d\times n}$，其中$R \in \R^{d\times m}$，所以
+\begin{align*}
+    K & = \begin{bmatrix}
+            R^T R & R^T S \\
+            S^T R & S^T S 
+          \end{bmatrix} 
+\end{align*}
+另一方面，我们也可以通过某种采样方法（比如均匀采样）选择$K$的$m$行（或者列），一般来说$K$表示的是数据点之间的关系，所以可以调整选中行或者列在$K$中的顺序而不会影响原始信息，不妨将选中的行调整到$K$的前排，没被选中的都放到后排，从而将$K$分块表示为如下形式
+\begin{align*}
+    K & = \begin{bmatrix}
+            A & B \\
+            B^T & C
+          \end{bmatrix} 
+\end{align*}
+其中$[A \quad B]$是我们采样的行，此时，我们令$A = R^T R$，$B = R^T S$（通常情况，等式不会自然成立，这里我们令他们成立，目的是用$A,B$来表示$C$）。首先，我们对$A$做谱分解求得$R$，
+\begin{equation*}
+    A = R^T R = U\Sigma U^T
+\end{equation*}
+即，$R = \Sigma^{\frac{1}{2}}U^T$，又因为
+\begin{equation*}
+    B = R^T S = U\Sigma^{\frac{1}{2}}S
+\end{equation*}
+所以，$S = \Sigma^{-\frac{1}{2}}U^T B$，
+此时$C \approx B^T A^{-1} B$，记用$A,B$近似的$K$为$\hat{K}$，容易知道它是$K$的一个低秩近似，秩最多是$m$，将$B^T A^{-1} B$带入$\hat{K}$有
+\begin{align*}
+    \hat{K} & = \begin{bmatrix}
+            A & B \\
+            B^T & B^T A^{-1} B
+          \end{bmatrix} 
+          = \begin{bmatrix}
+              U\Sigma U^T & B \\
+            B^T & B^T U \Sigma^{-1} U^T B
+          \end{bmatrix}
+          = \begin{bmatrix}
+            U \\
+            B^T U \Sigma^{-1}
+          \end{bmatrix} \Sigma
+          \begin{bmatrix}
+            U^T & \Sigma^{-1}U^T B
+          \end{bmatrix}
+          = K_{:1}A^{-1}K_{:1}^T
+\end{align*}
+也就是说，我们可以用$\begin{bmatrix} U \\ B^T U \Sigma^{-1} \end{bmatrix} = K_{:1}U\Sigma^{-1}$来近似$K$的特征向量，用$A$的特征值$\Sigma$来近似$K$的特征值，这里$K_{:1} = [A \quad B]^T$是我们采样的行。由于只需要对$A$这个$\R^{m\times m}$的矩阵做分解就可以近似大矩阵的特征值和特征向量，故我们加速了大矩阵的分解。完整Nyström算法见\ref{alg: Nyström method}，该算法时间复杂度是$O(nm^2 + m^3)$。
+\begin{algorithm}
+    \caption{Nyström 方法}\label{alg: Nyström method}
+    \KwIn{半正定矩阵$K$，采样数目$m$}
+    \KwOut{低秩矩阵$\hat{K}$}
+    $S \gets$ 根据某些采样算法得到的列（或者行）的下标 \\
+    $A \gets K(S,S)$ \\
+    $K_{:1} \gets K(:,S)$ \\
+    令$A = U\Sigma U^T$是$A$的谱分解，$U,\Sigma$分别是$A$的特征向量和特征值。\\
+    \textbf{返回} 低秩矩阵$\hat{K} = K_{:1}A^{-1}K_{:1}^T$或者近似的特征向量$\hat{U}_K = K_{:1}U\Sigma^{-1}$
+\end{algorithm} 
+% 那求出$R$和$S$和加速特征值分解有什么关系呢？注意到我们实际要得到的特征向量可以从$X$处轻松获得，而要获得$X$，我们只需要对$A$这个$\R^{m\times m}$的矩阵做分解就可以获得，故我们加速了大矩阵的分解。
+对于Nyström 方法，我们应该注意什么呢？第一，矩阵$K$应该本身就是低秩的，否则使用Nyström 方法将没有意义。第二，行的选择很关键，如果我们选到了大量的线性相关的行，则估计误差就会很大。
+\textcolor{red}{将A改成$K$}
+\begin{theorem}
+    \label{theo: nystrom_uniform}
+    令$\epsilon \in (0,1)$，$\delta \in (0,1)$，考虑用均匀采样$m$列（可以放回也可以不放回），则当$m$满足$m \geq 2 \epsilon^{-2} \mu k \log (k / \delta)$时
+    \begin{equation*}
+        \|A-\tilde{A}\|_{2} \leq\left(1+\frac{n}{(1-\varepsilon) m}\right)\left\|A-A_{k}\right\|_{2}
+    \end{equation*}
+    以至少$1-3\delta$的概率成立，$\norm{.}_2$是矩阵的谱范数(spectral norm)，其中
+    \begin{equation*}
+        \mu=\frac{n}{k} \max _{i=1, \ldots, n}\left\|V_{k}(i,:)\right\|_{2}^{2}
+    \end{equation*}
+    记$V$是将$A$的特征值从大到小排序后对应的特征向量，$V_{k}$是$V$的前$k$列，$A_k$是$A$的最优的秩为$k$的近似矩阵。
+\end{theorem}
+常用的的采样（列选择）是均匀采样，基于文献\cite{gittens2016revisiting}的结论，定理\ref{theo: nystrom_uniform}给出了均匀采样的话Nyström方法的误差，这里$\mu$被称为$V_k$的coherence。可以看到如果coherence比较大的话，均匀采样效果不太好。因此，一些更加高级的采样方法被提了出来，比如以概率$\left\|V_{k}(i,:)\right\|_{2}^{2}/k$采样第$i$列，有放回的重复$m$次的采样方式，这个概率也被称为leverage score。
+\begin{theorem}
+    令$\epsilon \in (0,1)$，$\delta \in (0,1)$，考虑按照上面描述的高级采样方式采样$m$列，则当$m \geq O\left(\epsilon^{-2} k \log (k / \delta)\right)$时有
+    \begin{equation*}
+        \|A-\tilde{A}\|_{2} \leq\left\|A-A_{k}\right\|_{2}+\epsilon^{2}\left\|A-A_{k}\right\|_{*}
+    \end{equation*}
+    以至少$0.8-2\delta$的概率成立，其中$\norm{.}_{*}$是矩阵的迹范数(trace norm)
+\end{theorem}
+当然，精确计算leverage score需要对$A$做SVD，而这正是我们想避免的。尽管如此，可以在差不多$O(ek \log e)$的时间复杂度下对leverage score做近似，如果$A$有$O(e)$个非零元素的话，这里近似的误差是一个乘性误差。
+到目前为止最快的利用leverage score的Nyström方法的时间复杂度接近$n$的线性函数，该算法用了一种复杂的递归的采样方式\citing{musco2017recursive}。
+
+那么怎么将Nyström方法用到谱聚类上呢？令$A \in \R^{n \times n}$是谱聚类的相似度矩阵，它对应的归一化的拉普拉斯矩阵是$L_n = I - D^{-1/2}AD^{-1/2}$，回忆求解谱聚类需要找到$L_n$的最小的$k$个特征值对应的特征向量，这等价于找到$M = D^{-1/2}AD^{-1/2}$最大的$k$个特征值对应的特征向量，所以我们的目的就是要近似这些特征向量，通过前面的分析，我们可以通过对$A$分块拿到$A$的近似特征向量，这里的基本思想是用$A$的分块来表示$M$的分块，然后用$M$的分块利用Nyström方法近似$M$的特征向量，该方法由文献\cite{fowlkes2004spectral}提出，详解如下。我们将$A$做如下分块
+\begin{equation*}
+    A = \left[\begin{array}{c|c}
+        A_{11} & A_{21}^T \\
+      \hline
+      A_{21} & A_{22}
+    \end{array}\right]
+\end{equation*}
+我们知道的是$A_{11}$和$A_{21}$，根据Nyström方法我们可以得到一个低秩近似$\hat{A}$，根据$\hat{A}$可以得到一个近似的度矩阵$\hat{D} = \text{diag}(\hat{A}\mathbf{1})$，$\text{diag}(v)$是一个以向量$v$为对角元的对角矩阵，$\mathbf{1}$是一个元素全为1的向量，类比于$A$的分块，将$\hat{D}$分块。
+\begin{equation*}
+    \hat{A} = \left[\begin{array}{c|c}
+        A_{11} & A_{21}^T \\
+      \hline
+      A_{21} & A_{21}A_{11}^{-1}A_{21}^T
+    \end{array}\right],
+    \hat{D} = \left[\begin{array}{c|c}
+        D_{11} &  \\
+      \hline
+      & \hat{D}_{22}
+    \end{array}\right]
+\end{equation*}
+有了$\hat{A}$和$\hat{D}$可以近似$M$，令近似矩阵是$\hat{M}$，则有
+\begin{equation*}
+    \hat{M} = \hat{D}^{-1/2}\hat{A}\hat{D}^{-1/2} = \left[\begin{array}{c|c}
+        M_{11} & \hat{M}_{21}^T \\
+      \hline
+      \hat{M}_{21} & \hat{M}_{22}
+    \end{array}\right]
+\end{equation*}
+其中$M_{11} = D_{11}^{-1/2}A_{11}D_{11}^{-1/2}$，$\hat{M}_{21} = \hat{D}_{22}A_{21}D_{11}^{-1/2}$，记$\hat{M}_{:1} = \begin{bmatrix}
+    M_{11} \\
+    \hat{M}_{21}
+\end{bmatrix}$，此时即可用算法\ref{alg: Nyström method}来近似$M$的特征向量，只不过此时算法\ref{alg: Nyström method}中的$A$是$M_{11}$，$K_{:1}$是$\hat{M}_{:1}$。
+
+值得注意的是，这样求出来的的近似特征向量不可直接基于它用$k$-means聚类，原因是这个近似的特征向量列不正交，由于不正交，基于这样的特征向量可能得出的谱聚类的解质量很差，所以我们需要对现有近似特征向量做后处理，使其正交。在文献\cite{fowlkes2004spectral}中，作者根据分块矩阵$M_{11}$是否是半正定的提出了两种方法。
+
+（一）$M_{11}$是半正定
+
+首先，考虑将$\hat{M}$写成谱分解的样子
+\begin{align*}
+    \hat{M} &= \begin{bmatrix}
+        M_{11} \\ \hat{M}_{21}
+    \end{bmatrix} M_{11}^{-1}
+    \begin{bmatrix}
+        M_{11} & \hat{M}_{21}^T
+    \end{bmatrix} \\
+    &= \left( \begin{bmatrix}
+        M_{11} \\ \hat{M}_{21}
+    \end{bmatrix} M_{11}^{-1/2} U \Sigma^{-1/2} \right) \Sigma \left( \Sigma^{-1/2} U^T M_{11}^{-1/2} \begin{bmatrix}
+        M_{11} & \hat{M}_{21}^T \end{bmatrix} \right) \\
+    &= V\Sigma V^T
+\end{align*}
+上式中$\Sigma$是任意对角矩阵，$U$是任意正交矩阵，为了求出$U$和$\Sigma$，我们要求$V$列正交，有
+\begin{align*}
+    I &= V^T V \\
+    &= \left( \Sigma^{-1/2} U^T M_{11}^{-1/2} \begin{bmatrix}
+        M_{11} & \hat{M}_{21}^T \end{bmatrix} \right) \left( \begin{bmatrix}
+        M_{11} \\ \hat{M}_{21} \end{bmatrix} M_{11}^{-1/2} U \Sigma^{-1/2} \right) \\
+\end{align*}
+对上面等式左乘$U \Sigma^{1/2}$，右乘$\Sigma^{1/2} U^T$，有
+\begin{align*}
+    U\Sigma U^T &= \left( M_{11}^{-1/2} \begin{bmatrix}
+        M_{11} & \hat{M}_{21}^T \end{bmatrix} \right) \left( \begin{bmatrix}
+        M_{11} \\ \hat{M}_{21} \end{bmatrix} M_{11}^{-1/2} \right) \\
+        &= M_{11} + M_{11}^{-1/2} \hat{M}_{21}^T \hat{M}_{21} M_{11}^{-1/2}
+\end{align*}
+所以说，我们只要对$S = M_{11} + M_{11}^{-1/2} \hat{M}_{21}^T \hat{M}_{21} M_{11}^{-1/2}$做谱分解，得到它的特征向量$U_S$和特征值$\Sigma_S$就可以得到$M$的近似特征向量$V = \begin{bmatrix} M_{11} \\ \hat{M}_{21} \end{bmatrix} M_{11}^{-1/2} U_S \Sigma_S^{-1/2}$
+
+（二）$M_{11}$不是半正定
+
+如果$M_{11}$不是半正定，$M_{11}^{-1/2}$就没有定义，前面方法就不可以正交化，文献\cite{fowlkes2004spectral}中将情况1的方式称为one-shot，因为不用求出不正交的特征向量，而这里需要按照以下两步进行。首先，根据前面的方法得出近似的但是不正交的特征向量$\bar{V} = \hat{M}_{:1}U_{M_{11}}\Sigma_{M_{11}}^{-1}$，其中$U_{M_{11}}$和$\Sigma_{M_{11}}^{-1}$分别是$M_{11}$的特征向量和特征值。接着，取$Z = \bar{V}\Sigma_{M_{11}}^{1/2}$，对$Z$做SVD，$U_Z$即为所求的正交化处理后的特征向量
+\begin{equation*}
+    Z = U_{Z}\Sigma_{Z}V_Z^T
+\end{equation*}
+这个基于Nyström方法加速谱聚类的方法总结见算法\ref{alg: Nyström spectral}，这里$\hat{U}_{:k}$是$\hat{U}$最大的$k$个特征值对应的特征向量。
+\begin{algorithm}
+    \caption{Nyström 方法加速谱聚类}\label{alg: Nyström spectral}
+    \KwIn{近似的相似度矩阵$\hat{A}$}
+    \KwOut{归一化拉普拉斯矩阵$L_n$最小的$k$个特征值对应的特征向量}
+    $\hat{D} \gets \text{diag}(\hat{A}\mathbf{1})$\\
+    $M_{11} \gets D_{11}^{-1/2}A_{11}D_{11}^{-1/2}$ \\
+    $\hat{M}_{21} \gets \hat{D}_{22}A_{21}D_{11}^{-1/2}$ \\
+    \uIf{$M_{11}$是半正定矩阵}{
+        $S = M_{11} + M_{11}^{-1/2} \hat{M}_{21}^T \hat{M}_{21} M_{11}^{-1/2}$ \\
+        $U_S,\Sigma_S \gets $ 对$S$做谱分解得到它的特征向量和特征值 \\
+        $\hat{U} = \begin{bmatrix} M_{11} \\ \hat{M}_{21} \end{bmatrix} M_{11}^{-1/2} U_S \Sigma_S^{-1/2}$
+    }
+    \Else{
+        $U_{M_{11}},\Sigma_{M_{11}} \gets $ 对$M_{11}$做谱分解得到它的特征向量和特征值 \\
+        $Z \gets \begin{bmatrix} M_{11} \\ \hat{M}_{21} \end{bmatrix} U_{M_{11}} \Sigma_{M_{11}}^{-1/2}$ \\
+        $\hat{U} \gets $ 对$Z$做奇异值分解得到它的左奇异矩阵
+    }
+    \textbf{返回} $\hat{U}_{:k}$
+\end{algorithm}

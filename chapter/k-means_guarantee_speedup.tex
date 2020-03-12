@@ -1,0 +1,79 @@
+\section{加速\texorpdfstring{$k$}{k}-means且有理论保证}
+很多时候我们希望算法既有理论保证也要速度快，本节我们将介绍这类算法。算法的基本思想是用前文减少数据量的方法减少数据，然后在少量数据上运行有理论保证的算法，接着证明这个解对于全部点也是有保证的。
+\begin{algorithm}
+    \caption{基于均匀不放回采样的$k$-means算法}\label{alg: uniform_k-means}
+    \KwIn{数据集$\mathcal{X}$，类数目$k$，采样数$s$}
+    \KwOut{$k$个点$C$}
+    $S \gets$ 从$\mathcal{X}$中均匀采样$s$个点\\
+    $C \gets$ 在$S$上运行一个$\alpha$近似算法\\
+    \textbf{返回} $C$
+\end{algorithm}
+一种简单且有理论保证的减少数据量的方式是均匀采样\citing{Mohan:2017:BNA:3172077.3172235}，算法详
+细描述见算法\ref{alg: uniform_k-means}，可以证明该方法有如下理论保证。
+\begin{theorem}[均匀不放回采样的解的质量]
+    \label{theo: uniform_k-means}
+    令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。 令 C 是由算法 \ref{alg: uniform_k-means}返回的点. 假设我们均匀不放回的采样s个点，使得,
+    \begin{equation*}
+    s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{\beta^2 m^2}{2\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
+    \end{equation*}
+    则，我们有
+    \begin{equation*}
+    \varphi(\mathcal{X},C) \leq 4(\alpha + \beta)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation*}
+    以至少 $1-2\delta$的概率, 其中$\Delta = \max\limits_{i,j}\norm{x_i - x_j}^2$是数据直径的平方, $m = \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})/n$是点到其对应的中心点的距离的平均值。
+\end{theorem}
+该方法优点是简单，但是该方法的采样点数目由数据点的直径决定，如果直径较大，该方法便会失去实用价值。类似的还有基于均匀放回采样的算法\citing{czumaj2004sublinear}。
+
+为了解决直径的问题，我们可以使用其他有理论保证的采样算法替换算法\ref{alg: reduce_k-means}中的算法$\mathcal{A}_s$，不过替换之后为了使最终解有理论保证，需要修改算法\ref{alg: reduce_k-means}，即给采样点带上权重，权重是采样点对应的类的大小，修改后的算法见\ref{alg: reduce_k-means2}。
+\begin{algorithm}
+    \caption{基于减少数据量的$k$-means算法2}\label{alg: reduce_k-means2}
+    \KwIn{数据集$\mathcal{X}$，类数目$k$，聚类算法$\mathcal{A}_c$，有理论保证的采样算法$\mathcal{A}_s$，采样数$s$}
+    \KwOut{$k$个点$C$}
+    $S \gets$ $\mathcal{A}_s(\mathcal{X},s)$ \\
+    对点$s_i \in S$，令$w_i$是$\mathcal{X}$中离$s_i$最近的点的数目 \\
+    $C \gets$ 令$w_i$是$s_i$的权重，在带权的$S$上运行一个$\alpha$近似算法$\mathcal{A}_c$ \\
+    \textbf{返回} $C$
+\end{algorithm}
+前面说过$k$-means++可以扩展到seed $s$个点（$s>k$），把扩展后的算法称为$k$-means++ overseeding，对于$k$-means++ overseeding算法可以证明如下结论\citing{aggarwal2009adaptive}
+\begin{theorem}[$k$-means++ overseeding解的理论保证1]
+    \label{theo: k-means++ overseeding1}
+    令$S$是$k$-means++ overseed出来的点集，且$|S| = \lceil 16(k+\sqrt{k}) \rceil = O(k)$，则有
+    \begin{equation*}
+        \varphi(\mathcal{X},S) \leq 20 \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation*}
+    以至少0.03的概率成立（通过重复实验$\log (1/\delta)$次取最好结果，概率可以被增加到$1-\delta$）
+\end{theorem}
+该定理说的是用$k$-means++ overseeding采样$O(k)$个点，所有点到采样点的距离平方和就能到常数20，注意算法\ref{alg: reduce_k-means2}的目标是常数近似系数，不然使用$k$-means++可以直接有$O(\log k)$的近似，使用$k$-means++ overseeding就会失去意义。另外，Dennis\cite{wei2016constant}对$k$-means++ overseeding给出了一个更紧的理论界。
+\begin{theorem}[$k$-means++ overseeding解的理论保证2]
+    \label{theo: k-means++ overseeding2}
+    令$S$是$k$-means++ overseed出来的点集，且$|S| = \beta k$，$\beta \geq 1$，则有
+    \begin{equation*}
+        \frac{\E[\varphi(\mathcal{X},S)]}{\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})} \leq 8(1+\min\{\frac{\varphi(k-2)}{(\beta -1)k + \varphi},H_{k-1}\}) - \Theta(\frac{1}{n})
+    \end{equation*}
+    其中$\varphi = (1+\sqrt{5})/2$是黄金比例，$H_k = 1+\frac{1}{2}+...+\frac{1}{k} \sim \log k$是第$k$个调和数。
+\end{theorem}
+通过该定理，我们容易推得在采样数目是$O(k)$时，近似系数将从20变为9.137。
+用$k$-means++ overseeding算法作为算法\ref{alg: reduce_k-means2}中的$\mathcal{A}_s$，结合定理\ref{theo: k-means++ overseeding1}或者\ref{theo: k-means++ overseeding2}可以证明下面的结论
+\begin{corollary}[算法\ref{alg: reduce_k-means2}理论保证1]
+    使用$k$-means++ overseeding作为算法\ref{alg: reduce_k-means2}中的算法$\mathcal{A}_s$，且采样数$s = O(k)$，则有
+    \begin{equation*}
+        \varphi(\mathcal{X},C) \leq O(\alpha) \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation*}
+    其中$C$为算法\ref{alg: reduce_k-means2}返回的解，$\alpha$是算法\ref{alg: reduce_k-means2}第3步中$\alpha$近似算法的近似系数。
+\end{corollary}
+\begin{proof}
+    利用三角不等式，详细见文献\cite{aggarwal2009adaptive}
+\end{proof}
+研究发现$k$-means++ overseeding也能形成Coreset\citing{ackermann2012streamkm++}，由于Coreset符合推论\ref{cor: coreset_property1}的良好性质，我们可以得出如果在Coreset运行一个$\alpha$近似的聚类算法，则能获得一个在全部点上是$\alpha(1+O(\epsilon))$近似的解。
+\begin{theorem}[$k$-means++ overseeding形成Coreset]
+    令算法\ref{alg: reduce_k-means2}中采样数为$s$，如果$s = \Theta\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}} \log ^{d / 2}\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}}\right)\right)$，且采样方法是$k$-means++ overseeding，则算法\ref{alg: reduce_k-means2}中带权重的$S$有至少$1-\delta$的概率是$\mathcal{X}$的一个$(k,6\epsilon)$的Coreset。
+\end{theorem}
+根据Coreset的性质，我们有以下推论。
+\begin{corollary}[算法\ref{alg: reduce_k-means2}理论保证2]
+    使用$k$-means++ overseeding作为算法\ref{alg: reduce_k-means2}中的算法$\mathcal{A}_s$，且采样数$s = \Theta\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}} \log ^{d / 2}\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}}\right)\right)$，则有
+    \begin{equation*}
+        \varphi(\mathcal{X},C) \leq \alpha(1+O(\epsilon)) \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation*}
+    其中$C$为算法\ref{alg: reduce_k-means2}返回的解，$\alpha$是算法\ref{alg: reduce_k-means2}第3步中$\alpha$近似算法的近似系数。
+\end{corollary}
+需要注意的是形成Coreset需要采样更多的点，采样数从$O(k)$增加到了$O(\log n)$，所以时间复杂度也增加了，但是相应的常数的系数也变小了，得到了收获。由于已经有常数近似的算法，我们自然希望能在保持这一近似的情况下让算法尽量的快。那么，是否存在次线性时间的常数近似的算法呢？遗憾的是，文献\cite{mettu2004optimal}告诉我们一般情况下不存在这样的算法，除非给数据加一些假设。在下一节，我们将展示如何通过一些数据假设让算法\ref{alg: uniform_k-means}能在次线性时间，具体来说是多项式对数时间内，获得常数近似系数的解。
