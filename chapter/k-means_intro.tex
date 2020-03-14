@@ -2,7 +2,7 @@
 本章聚焦$k$-means问题，前面已经提到解决该问题的一个经典算法Lloyd算法，由于文献\cite{garey1982complexity,kleinberg1998microeconomic,mahajan2009planar}指出$k$-means问题是NP难的，所以该算法准确来说是一个近似算法。前面提到，该算法收到初始点影响大，所以本章将首先探讨有理论保证的$k$-means问题的算法。其次，$O(nkdt)$的时间复杂度在海量数据下也难以处理，所以接着我们会探讨如何加速。然后，我们探讨如何将这两点都覆盖，最后我们给出我们的贡献并总结本章。
 
 \section{\texorpdfstring{$k$}{k}-means问题引入及背景知识}
-我们首先定义$k$-means问题，给定点$x \in \R^d$和集合$C \subseteq \R^d$，我们可以定义该点到集合的距离
+我们首先定义$k$-means问题，给定点$x \in \R^d$和集合$C \subseteq \R^d$，$d$是数据的维度，我们可以定义该点到集合的距离
 \begin{equation*}
 d(x,C) = \min\limits_{c \in C}\norm{x - c}
 \end{equation*}

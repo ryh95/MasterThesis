@@ -1,6 +1,6 @@
 \section{更快得到\texorpdfstring{$k$}{k}-means的解}
 本节分析如何加速$k$-means的求解，目前有两种方法加速，一种是减少数据量，还有一种利用三角不等式。
-\subsection{减少数据量}
+
 加速聚类的一个自然的想法是将大数据浓缩，得到小数据，
 在小数据上聚类。用小数据上的解作为大数据上的解。由于用于减少数据量的采样方法有很多，这是一个框架性算法，算法列在\ref{alg: reduce_k-means}中。
 \begin{algorithm}
@@ -11,7 +11,7 @@
     $C \gets$ $\mathcal{A}_c(S,k)$ \\
     \textbf{返回} $C$
 \end{algorithm}
-在上一节提到的理论保证算法都可以扩展后当$\mathcal{A}_s$，比如将$k$-means++、K-M$\text{C}^2$、AF-KM$\text{C}^2$的seeding数目从$k$增加到$m$，使用$k$-means\(\vert \vert\)采样，将局部搜索的返回$k$个点增加到返回$m$个点，以及经典的均匀采样。虽然他们可以扩展为采样算法，但是他们主要目的还是提供理论保证，而有一个技术是专门压缩数据量的，称为Coreset。
+在上一节提到的理论保证算法都可以扩展后当$\mathcal{A}_s$，比如将$k$-means++、K-M$\text{C}^2$、AF-KM$\text{C}^2$的seeding数目从$k$增加到$m$，使用$k$-means\(\vert \vert\)采样，将局部搜索的返回$k$个点增加到返回$m$个点，以及经典的均匀采样。虽然理论保证的算法可以扩展为采样算法，但是他们主要目的还是提供理论保证，而有一个技术是专门压缩数据量的，称为Coreset。
 
 通俗来讲，Coreset指的是一些特殊的采样点（可能带权重），给定任意$k$个点，这些采样点到这$k$个点的距离平方和都能够近似所有点到这$k$个点的距离平方和，定义见\ref{def: coreset}。
 \begin{definition}[常规Coreset]
@@ -65,13 +65,12 @@
     \begin{equation*}
         m \geq c\frac{dk\log k + \log(1/\delta)}{\epsilon^2}
     \end{equation*}
-    其中$c$是一个常数。这样就可以至少1-$\delta$的概率使得集合$S$是一个$(\epsilon,k)$-lightweight coreset。
+    其中$c$是一个常数。这样就可以至少1-$\delta$的概率使得集合$S$是一个$(\epsilon,k)$-Lightweight Coreset。
 \end{theorem}
-该定理说明只要采样常数个点（与$n$无关），算法就可以在$O(nd)$的时间复杂度里取得好的聚类结果（如果$\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})/\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})$不大的话）。特别的，如果前述假设2满足的话，对于采样点来说近似系数就变为了$1+O(k\epsilon)$。
+该定理说明只要采样常数个点（与$n$无关），算法就可以在$O(nd)$的时间复杂度里取得好的聚类结果（如果$\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})/\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})$不大的话）。特别的，如果前述假设2满足的话，对于采样点来说近似系数就变为了$1+O(k\epsilon)$。%remark: 对于采样点来说近似系数就变为了$1+O(k\epsilon)$ 说法不严谨，\phi(X,C_{opt_k}^S)是$1+O(k\epsilon)$　不是\phi(X,S)
 
 构造 Coreset 的方法除了这里提到的，还有很多， 比如还
 可以用$k$-means++构造Coreset\citing{ackermann2012streamkm++}，Coreset作为一个经典的数
 据压缩范式还被用于其他机器学习问题中，比如PCA， NNMF（Non Negative Matrix Factorization）等，文献\cite{bachem2017practical}和\cite{feldman2013turning}是很好的参考资料。
 
-\subsection{三角不等式}
-xxx
+除了减少数据量，基于三角不等式也可以加速，由于本论文工作和该方向重合度不高，感兴趣的读者可参考文献\cite{ding2015yinyang,elkan2003using,drake2012accelerated,newling2018novel}。
