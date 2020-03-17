@@ -78,13 +78,13 @@ w_{ij}=exp(-\frac{||x_i-x_j||_2^2}{2\sigma^2})
         
 对于无向图G的切图，我们的目标是将图$G(V,E)$切成相互没有连接的k个子图，每个子图点的集合为：$A_1,A_2,..A_k$，它们满足$A_i \cap A_j = \emptyset$,且$A_1 \cup A_2 \cup ... \cup A_k = V$.
 
-对于任意两个子图点的集合$A, B \subset V$, $A \cap B =  \emptyset$, 我们定义A和B之间的切图权重为：
+对于任意两个子图点的集合$A, B \subset V$，我们定义A和B之间的链接为：
 \begin{equation*}
-W(A, B) = \sum\limits_{i \in A, j \in B}w_{ij}
+\operatorname{linkage}(A, B) = \sum\limits_{i \in A, j \in B}w_{ij}
 \end{equation*}
 那么对于我们k个子图点的集合：$A_1,A_2,..A_k$，我们定义切图cut为：
 \begin{equation*}
-cut(A_1,A_2,...A_k) = \frac{1}{2}\sum\limits_{i=1}^{k}W(A_i, \overline{A}_i )
+cut(A_1,A_2,...A_k) = \sum\limits_{i=1}^{k}\operatorname{linkage}(A_i, \overline{A}_i )
 \end{equation*}
 其中$\bar{A_i}$为$A_i$的补集，意为$V - A_i$。
 
@@ -94,34 +94,40 @@ cut(A_1,A_2,...A_k) = \frac{1}{2}\sum\limits_{i=1}^{k}W(A_i, \overline{A}_i )
     \includegraphics[scale=0.7]{cut_problem.jpg}
     \caption{可能出现的不好的切割}
 \end{figure}
-我们选择一个权重最小的边缘的点，比如$C$和$H$之间进行cut，这样可以最小化$cut(A_1,A_2,...A_k)$, 但是却不是最优的切图，如何避免这种切图，并且找到类似图中"Best Cut"这样的最优切图呢？我们下一节就来看看谱聚类中常用的切图方法。
+我们选择一个权重最小的边缘的点，比如$C$和$H$之间进行切割，这样可以最小化$cut(A_1,A_2,...A_k)$, 但是却不是最优的切图，如何避免这种切图，并且找到类似图中"Best Cut"这样的最优切图呢？我们下一节就来看看谱聚类中常用的切图方法。
 
 \subsection{Normalized Cut}
-为了避免最小切图导致的切图效果不佳，我们需要对每个子图的规模做出限定，一般来说，有两种切图方式，第一种是RatioCut，第二种是Ncut。一般我们使用Ncut，故在此只介绍Ncut。
+为了避免最小切图导致的切图效果不佳，我们需要对每个子图的规模做出限定，一般来说，有两种切图方式，第一种是RatioCut，第二种是Ncut。一般我们使用Ncut，故在此只介绍Ncut\citing{shi2000normalized}。
 
-Normalized cut切图为了避免上一节中的不好的切图，对每个切图，不光考虑最小化$cut(A1,A2,...Ak)$，它还同时考虑每个类中点的数目尽可能平衡，即
+Normalized cut切图为了避免上一节中的不好的切图，对每个切图，不光考虑最小化$cut(A_1,A_2,...A_k)$，它还同时考虑每个类中点的数目尽可能平衡，即
 \begin{equation*}
-NCut(A_1,A_2,...A_k) = \frac{1}{2}\sum\limits_{i=1}^{k}\frac{W(A_i, \overline{A}_i )}{vol(A_i)}
+Ncut(A_1,A_2,...A_k) = \sum\limits_{i=1}^{k}\frac{\operatorname{linkage}(A_i, \overline{A}_i )}{vol(A_i)}
 \end{equation*}
 为了优化该目标函数，我们定义如下指示向量。
-\begin{equation*}
+\begin{equation}
+\label{eq: spectral indicator}
 h_{ij}= \begin{cases} 0& { v_i \notin A_j}\\ \frac{1}{\sqrt{vol(A_j)}}& { v_i \in A_j} \end{cases}
-\end{equation*}
+\end{equation}
 则
 对于$h_i^TLh_i$,有：
-\begin{align} h_i^TLh_i & = \frac{1}{2}\sum\limits_{m=1}\sum\limits_{n=1}w_{mn}(h_{im}-h_{in})^2 \\& =\frac{1}{2}(\sum\limits_{m \in A_i, n \notin A_i}w_{mn}(\frac{1}{\sqrt{vol(A_i)}} - 0)^2 +  \sum\limits_{m \notin A_i, n \in A_i}w_{mn}(0 - \frac{1}{\sqrt{vol(A_i)}} )^2\\& = \frac{1}{2}(\sum\limits_{m \in A_i, n \notin A_i}w_{mn}\frac{1}{vol(A_i)} +  \sum\limits_{m \notin A_i, n \in A_i}w_{mn}\frac{1}{vol(A_i)}\\& = \frac{1}{2}(cut(A_i, \overline{A}_i) \frac{1}{vol(A_i)} + cut(\overline{A}_i, A_i) \frac{1}{vol(A_i)}) \\& =  \frac{cut(A_i, \overline{A}_i)}{vol(A_i)} 
+\begin{align} h_i^TLh_i & = \frac{1}{2}\sum\limits_{m=1}\sum\limits_{n=1}w_{mn}(h_{im}-h_{in})^2 \\& =\frac{1}{2}(\sum\limits_{m \in A_i, n \notin A_i}w_{mn}(\frac{1}{\sqrt{vol(A_i)}} - 0)^2 +  \sum\limits_{m \notin A_i, n \in A_i}w_{mn}(0 - \frac{1}{\sqrt{vol(A_i)}} )^2\\& = \frac{1}{2}(\sum\limits_{m \in A_i, n \notin A_i}w_{mn}\frac{1}{vol(A_i)} +  \sum\limits_{m \notin A_i, n \in A_i}w_{mn}\frac{1}{vol(A_i)})\\& = \frac{1}{2}(\operatorname{linkage}(A_i, \overline{A}_i) \frac{1}{vol(A_i)} + \operatorname{linkage}(\overline{A}_i, A_i) \frac{1}{vol(A_i)}) \\& =  \frac{\operatorname{linkage}(A_i, \overline{A}_i)}{vol(A_i)} 
 \end{align}
 也就是说
 \begin{equation*}
-NCut(A_1,A_2,...A_k) = \sum\limits_{i=1}^{k}h_i^TLh_i = \sum\limits_{i=1}^{k}(H^TLH)_{ii} = tr(H^TLH)
+Ncut(A_1,A_2,...A_k) = \sum\limits_{i=1}^{k}h_i^TLh_i = \sum\limits_{i=1}^{k}(H^TLH)_{ii} = tr(H^TLH)
 \end{equation*}
 我们将Ncut的优化问题转化为了一个二次型优化问题，并注意到该问题有如下限制
 \begin{equation*}
 h_i^TDh_i = \sum\limits_{j=1}^{n}h_{ij}^2d_j =\frac{1}{vol(A_i)}\sum\limits_{j \in A_i}d_j= \frac{1}{vol(A_i)}vol(A_i) =1
 \end{equation*}
 此时，我们得到如下优化问题
+\begin{equation}
+\label{eq: ori_spectral_clustering}
+\argmin\limits_{H \in \R^{n \times k}} \; tr(H^TLH) \;\; s.t.\;H^TDH=I \quad \text{and H as in Eq. \ref{eq: spectral indicator} }
+\end{equation}
+注意到$H$是离散的，此时该问题是NP难的，为了求解我们允许$H$可以取连续值，该步骤称为relaxation，relax后的问题如下
 \begin{equation*}
-\argmin\limits_{H} \; tr(H^TLH) \;\; s.t.\;H^TDH=I
+    \label{eq: relax_spectral_clustering}
+    \argmin\limits_{H \in \R^{n \times k}} \; tr(H^TLH) \;\; s.t.\;H^TDH=I
 \end{equation*}
-注意到$H$是离散的，此时该问题是NP难的，为了求解我们允许$H$可以取连续值，该步骤称为relaxation，
-使用拉格朗日乘子法可以求解，解为$D^{-1/2}LD^{-1/2}$的最小的前k个特征值，对应的$H$为$D^{-1/2}LD^{-1/2}$的前k个特征向量，对H的每一行再做聚类，比如k-means即可得到最后的聚类结果。
+该问题使用拉格朗日乘子法可以求解，解为$D^{-1/2}LD^{-1/2}$的最小的前$k$个特征值，对应的$H$为$D^{-1/2}LD^{-1/2}$的前$k$个特征向量，对$H$的每一行再做聚类，比如$k$-means即可得到最后的聚类结果。除了这里的relaxation外，文献\cite{bie2006fast,bresson2013multiclass,rangapuram2014tight,rangapuram2016graph}分别提出了不同的relaxation方法，不过这里的方法理论上更简单且容易实现所以非常实用。

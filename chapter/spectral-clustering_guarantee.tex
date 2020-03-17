@@ -1,1 +1,86 @@
-\section{谱聚类的理论保证}
+\section{改进谱聚类聚类质量}
+本节我们探究如何改进谱聚类的质量，我们从两个维度考虑，一个方面是谱分解后的聚类质量来提高谱聚类的质量，另一方面是，通过把谱聚类转换成带权kernel $k$-means问题，用前述的$k$-means的一些方法来给谱聚类提供理论保证。
+
+\subsection{改进谱分解后的聚类}
+谱分解后，$k$个$n$维的特征向量使得每个数据点变为了一个$k$维向量，这个过程也可以理解为每个数据点经过特征变换获得了新的特征，这些新的特征有时也会称为谱嵌入(spectral embedding)，在传统的谱聚类中通过Lloyd算法将谱嵌入转化为离散的划分，但是Lloyd算法终究不够准确，这里我们考虑一些方法来改进这一转换的过程。文献\cite{stella2003multiclass}提出了一种后来被称为谱旋转\citing{huang2013spectral,chen2017scalable}的方法。回忆谱聚类的过程，原问题是式\ref{eq: ori_spectral_clustering}，文献\cite{stella2003multiclass}对式\ref{eq: ori_spectral_clustering}做如下等价改写，
+\begin{equation*}
+	\max _{Y \in I n d, Z=Y\left(Y^{T} D_{A} Y\right)^{-\frac{1}{2}}} \operatorname{Tr}\left(Z^{T} A Z\right)
+\end{equation*}
+这里$Y \in B^{n \times k}$是0/1标记矩阵(目的是解出它)，值只能取0/1，每一行只有一个1，$A$是相似度矩阵，$D_A$是$A$的度矩阵，对上式relax后得到下式
+\begin{equation*}
+	\max _{Z^{T} D_{A} Z=I_{k}} \operatorname{Tr}\left(Z^{T} A Z\right)
+\end{equation*}
+其中$I_k$是$k\times k$的单位阵，这个relaxation和式\ref{eq: relax_spectral_clustering}是等价的，这个问题的最优解$Z^*$是$D_A^{-1}A$最大的$k$个特征向量。注意到，如果对$Z^*$右乘正交矩阵，上面relax式目标值不会改变，换句话说，我们可以用$Z^*R$去逼近$Z$，这里的$R$是一个正交矩阵，这便是谱旋转。在文献\cite{stella2003multiclass}中，在求得$Z^*$后，作者对$Z^*$的每一行做了行归一化(每一行的行范数是1)，得到$Y^*$。然后再用$Y^*R$去逼近$Y$，
+\begin{equation*}
+ 	\min_{Y \in I n d,R^TR = RR^T = I_k} \norm{Y - Y^*R}_F^2
+\end{equation*}
+为什么要归一化呢？可能是作者觉得原来的$Y$每一行范数也是1，为了把relax后的解变回到原来的$Y$的空间，需要做行归一化。但是，注意到$Z$和$Y$的关系，$Z=Y\left(Y^{T} D_{A} Y\right)^{-\frac{1}{2}}$，也即是说$Y$是做了列的伸缩得到的$Z$，那么行的归一化就不是一种合理的操作。文献\cite{chen2017scalable}显然注意到了这一点，提出另一种更合理的谱旋转，核心思想是不把$Z^*$变为$Y^*$，直接让用$Z^*R$去逼近$Z$，从而得到下式
+\begin{equation*}
+	\min_{Y \in I n d,R^TR = RR^T = I_k} \norm{Y\left(Y^{T} D_{A} Y\right)^{-\frac{1}{2}} - Z^*R}_F^2
+\end{equation*}
+对上式的求解得到了更好的聚类质量，那么为什么谱旋转会比Lloyd更适合呢？文献\cite{huang2013spectral}对这一点给出了说明。给定谱嵌入$Q \in \R^{n \times k}，$如果用Lloyd求解，我们可以得到如下的矩阵表示
+\begin{equation*}
+	\min_{G \in Ind,H\in \R^{k \times k}} \norm{Q - GH}_F^2
+\end{equation*}
+如果用谱旋转便是
+\begin{equation*}
+	\min_{G \in Ind,R^TR=RR^T=I_k} \norm{G-QR}_F^2
+\end{equation*}
+根据酉不变性和正交矩阵对称阵也是正交矩阵可知，上式可以写作
+\begin{equation*}
+	\min_{G \in Ind,R^TR=RR^T=I_k} \norm{Q-GR}_F^2
+\end{equation*}
+经过对比，我们容易发现，之所以谱旋转比解$k$-means更好是因为对$H$施加了正交限制，缩小了$H$的范围自然更容易得到更好的$G$。
+
+\subsection{带权kernel \texorpdfstring{$k$}{k}-means问题}
+这个方法的基本思想是将谱聚类问题转为$k$-means问题，这样上一章所提出的各种有理论保证的算法就可以在谱聚类上。我们先介绍带权kernel $k$-means问题，再介绍这两者应该如何建立等价性。
+\begin{definition}[带权kernel $k$-means问题]
+    \label{def: weighted_kernel_kmeans}
+    给定集合 $\mathcal{X} \subseteq \R^d$ 和每一个$x \in \mathcal{X}$ 的权重 $w_i$, 找到一个大小为$k$的集合 $C$ 使得下述目标函数能最小
+    \begin{equation*}
+        \Psi(\mathcal{X},C) = \sum_{i=1}^k \sum_{x_j \in \pi_i}w_j \norm{\phi(x_j)-C_i}^2
+    \end{equation*}
+    这里$\pi_i$是第$i$个类，$\cup_{i=1}^k \pi_i = \mathcal{X}$，$\phi(.)$表示映射函数，$C_i = \frac{\sum_{x_j \in \pi_i}w_j \phi(x_j)}{\sum_{j \in \pi_i}w_j}$。
+\end{definition}
+根据$K_{ij} = \phi(x_i)^T\phi(x_j)$，和上式$C_i$的定义，我们可以如下计算高维中点$\phi(a_i)$到一个中心点$m_c$的距离，
+\begin{equation*}
+	\norm{\phi(a_i) - m_c}^2 = K_{i i}-\frac{2 \sum_{a_{j} \in \pi_{c}} w_{j} K_{i j}}{\sum_{a_{j} \in \pi_{c}} w_{j}}+\frac{\sum_{a_{j}, a_{l} \in \pi_{c}} w_{j} w_{l} K_{j l}}{\left(\sum_{a_{j} \in \pi_{c}} w_{j}\right)^{2}}
+\end{equation*}
+由此，我们得到一个求解带权kernel $k$-means问题的算法，带权kernel Lloyd算法\citing{dhillon2004unified}，见算法\ref{alg: weighted_kernel_Lloyd}，该算法时间复杂度是$O(n^2 \tau)$。
+\begin{algorithm}
+    \caption{带权kernel Lloyd算法}\label{alg: weighted_kernel_Lloyd}
+    \KwIn{数据集$\mathcal{X}$，类数目$k$，kernel $K$，权重$w$，最大迭代次数$t_{\text{max}}$}
+    \KwOut{$\mathcal{X}$的$k$个划分}
+    随机将$\mathcal{X}$划分，记划分为$\pi$，当前的迭代次数为$t$，初始值0\\
+    \While{$t<t_{\text{max}}$}{
+    	对每个数据点$a_i$和类$c$的中心点$m_c$计算距离
+	    \begin{equation*}
+	    	d(a_i,m_c) \gets K_{i i}-\frac{2 \sum_{a_{j} \in \pi_{c}} w_{j} K_{i j}}{\sum_{a_{j} \in \pi_{c}} w_{j}}+\frac{\sum_{a_{j}, a_{l} \in \pi_{c}} w_{j} w_{l} K_{j l}}{\left(\sum_{a_{j} \in \pi_{c}} w_{j}\right)^{2}}
+	    \end{equation*}\\
+	    更新每个点对应的所属类，记点$a_i$更新后的类id是$C_i^* = \argmin\limits_{c = 1,2,...,k} d(a_i,m_c)$，则$\pi_c$更新后的划分是
+	    \begin{equation*}
+	    	\pi_c = \{a_i|C_i^*=c\}
+	    \end{equation*}\\
+	    $t\gets t+1$
+    }
+    \textbf{返回}$\mathcal{X}$的$k$个划分
+\end{algorithm}
+根据文献\cite{dhillon2004unified}，带权重kernel $k$-means问题的目标函数值$\Psi(\mathcal{X},C)$可以写成矩阵形式
+\begin{equation*}
+	% \label{eq: matrix_form_wkk}
+	\Psi(\mathcal{X},C) = \operatorname{Tr}\left(W^{1 / 2} K W^{1 / 2}\right)-\operatorname{Tr}\left(\tilde{Y}^{T} W^{1 / 2} K W^{1 / 2} \tilde{Y}\right)
+\end{equation*}
+其中$\tilde{Y} = W^{1/2}X(X^TWX)^{-1/2}$，这里$X\in B^{n\times k}$是上一小节的0/1划分矩阵，接下来，我们揭示谱聚类同上面介绍的带权kernel $k$-means问题的联系。回忆谱聚类是最小化Ncut，这也等价于最大化Nassoc，这里
+\begin{equation*}
+	Nassoc=\sum_{i=1}^k \frac{\operatorname{linkage}(A_i,A_i)}{vol(A_i)} = \operatorname{Tr}(\tilde{Y}^TD^{-1/2}AD^{-1/2}\tilde{Y})
+\end{equation*}
+其中$\tilde{Y} = D^{1/2}X(X^TDX)^{-1/2}$，这里我们取$W=D,K=D^{-1}AD^{-1}$，并注意到$Ncut+Nassoc=k$即可得到下式
+\begin{equation}
+	\label{eq: wkk_spectral_clustering}
+	\Psi(\mathcal{X},C) = \operatorname{Tr}\left(D^{-1 / 2} A D^{-1 / 2}\right) - k + Ncut
+\end{equation}
+其中等式右边的前两项是一个和划分无关的常数，上式说明，只要令$W=D,K=D^{-1}AD^{-1}$，求解带权kernel $k$-means问题就是在解决谱聚类！通过前面的推导，我们知道带权$k$-means++是一个$O(\log k)$近似的算法，显然在kernel下依然有$O(\log k)$的近似，所以我们可以用$k$-means++或者其他的有理论保证的$k$-means算法使得谱聚类也有理论保证！不仅如此，这一等式还说明我们可以绕过谱分解从而减少大量时间。
+
+除去上面的两种方法外还有其他的改进谱聚类聚类质量的方法，比如在relax的时候施加更紧的限制\cite{yang2018new}，直接求解谱聚类的离散问题\cite{chen2018spectral}等等。
+
+% 可以做的方向：coreset 谱聚类

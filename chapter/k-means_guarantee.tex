@@ -1,4 +1,4 @@
-\section{给\texorpdfstring{$k$}{k}-means的解提供质量保证}
+\section{改进\texorpdfstring{$k$}{k}-means的聚类质量}
 
 选择好的初始化方法（seeding） 是提供质量保证的一条路
 线， 在 Lloyd 算法中传统初始化方法一般是均匀不放回的抓取$k$个点，这不是一个好的初始化方法， 由于 Lloyd 算法对初始
@@ -139,7 +139,7 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
     \label{def: weighted_kmeans}
     给定集合 $\mathcal{X} \subseteq \R^d$ 和每一个$x \in \mathcal{X}$ 的权重 $w_i$, 找到一个大小为$k$的集合 $C \subseteq \R^d$ 使得下述目标函数能最小
     \begin{equation*}
-        \psi(\mathcal{X},C) = \sum_{x \in \mathcal{X}}w_i d^2 (x,C)
+        \psi(\mathcal{X},C) = \sum_{x_i \in \mathcal{X}}w_i d^2 (x_i,C)
     \end{equation*}
 \end{definition}
 接着在带权重的$S$上聚类得到算法\ref{alg: kmeans||_seeding}，
