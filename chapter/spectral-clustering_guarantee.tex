@@ -46,7 +46,7 @@
 \begin{equation*}
 	\norm{\phi(a_i) - m_c}^2 = K_{i i}-\frac{2 \sum_{a_{j} \in \pi_{c}} w_{j} K_{i j}}{\sum_{a_{j} \in \pi_{c}} w_{j}}+\frac{\sum_{a_{j}, a_{l} \in \pi_{c}} w_{j} w_{l} K_{j l}}{\left(\sum_{a_{j} \in \pi_{c}} w_{j}\right)^{2}}
 \end{equation*}
-由此，我们得到一个求解带权kernel $k$-means问题的算法，带权kernel Lloyd算法\citing{dhillon2004unified}，见算法\ref{alg: weighted_kernel_Lloyd}，该算法时间复杂度是$O(n^2 \tau)$。
+由此，我们得到一个求解带权kernel $k$-means问题的算法，带权kernel Lloyd算法\citing{dhillon2004unified}，见算法\ref{alg: weighted_kernel_Lloyd}，该算法时间复杂度是$O(n^2 \tau)$，$\tau$是迭代次数。
 \begin{algorithm}
     \caption{带权kernel Lloyd算法}\label{alg: weighted_kernel_Lloyd}
     \KwIn{数据集$\mathcal{X}$，类数目$k$，kernel $K$，权重$w$，最大迭代次数$t_{\text{max}}$}

@@ -12,7 +12,7 @@
 但是这样的算法没有办法实现，因为一般情况下我们拿不到点经过映射后的新特征，有的$\phi$会把点映射到无穷维，我们能参与运算的只有kernel，所以真正的算法见算法\ref{alg: uniform_wkk}，这里$W(S,S)$和$K(S,S)$是基于采样索引获得的$W$和$K$的子矩阵，$Y\in B^{n\times k}$，该算法时间复杂度是$O(s^2+ns)$（如果$D$是单位阵的话）。类似定理\ref{theo: uniform_k-means}，文献\cite{Mohan:2017:BNA:3172077.3172235}得出了带权kernel $k$-means下的对应定理。
 \begin{theorem}[均匀不放回采样的谱聚类解的质量]
     \label{theo: uniform_wkk}
-    令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。令$C$是由算法\ref{alg: uniform_wkk}中$\pi$所对应的中心点. 假设我们均匀不放回的采样$s$个点，如果，
+    令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。令$C$是由算法\ref{alg: uniform_wkk}中$\pi'$所对应的中心点. 假设我们均匀不放回的采样$s$个点，如果，
     \begin{equation*}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{\beta^2 m^2}{2\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
     \end{equation*}
@@ -22,31 +22,10 @@
     \end{equation*}
     以至少 $1-2\delta$的概率, 其中$\Delta = \max\limits_{i,j}\norm{\phi(x_i) - \phi(x_j)}^2$是高维下数据直径的平方, $m = \Psi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})/n$是点到其对应的中心点的距离的平均值，$c$是一个划分无关的常数，$Ncut^*$是最优的Ncut。
 \end{theorem}
-\begin{algorithm}
-	\SetNoFillComment
-    \caption{基于均匀采样和带权kernel $k$-means的谱聚类算法}\label{alg: uniform_wkk}
-    \KwIn{数据集$\mathcal{X}$，类数目$k$，采样数$s$，相似度矩阵$A$，度矩阵$D$}
-    \KwOut{$\mathcal{X}$的$k$个划分}
-    $S \gets$ 从$1,2,...,n$中均匀采样$s$个数字\\
-    $W \gets D,K \gets D^{-1}AD^{-1}$\\
-    $W_s \gets W(S,S), K_s \gets K(S,S)$\\
-    $\pi \gets$ 基于$W_s$和$K_s$，在带权$S$上运行一个$\alpha$近似算法\\
-    \tcc{把点靠到高维中由采样点得到的中心点上}
-    \For{$i = 1,...,n$}{
-    	\For{$c = 1,...,k$}{
-    		\begin{equation*}
-	    	d(a_i,m_c) \gets K_{i i}-\frac{2 \sum_{a_{j} \in \pi_{c}} w_{j} K_{i j}}{\sum_{a_{j} \in \pi_{c}} w_{j}}+\frac{\sum_{a_{j}, a_{l} \in \pi_{c}} w_{j} w_{l} K_{j l}}{\left(\sum_{a_{j} \in \pi_{c}} w_{j}\right)^{2}}
-	    	\end{equation*}\\
-    	}
-    	$j \gets \argmin\limits_{c = 1,2,...,k} d(a_i,m_c)$\\
-    	$Y_{ij} \gets 1$
-    }
-    \textbf{返回}$Y$
-\end{algorithm}
-类似前面我们的更紧理论界，定理\ref{theo: uniform_k-means_sharper}，这里也可以把定理\ref{theo: uniform_wkk}做的更紧，从而得出下面的定理。
-\begin{theorem}[均匀不放回采样的谱聚类解的质量]
+类似前面定理\ref{theo: uniform_k-means_sharper}所得的$k$-means问题的更紧理论界，这里也可以把定理\ref{theo: uniform_wkk}做的更紧，从而得出下面的定理。
+\begin{theorem}[均匀不放回采样的谱聚类解的质量2]
     \label{theo: uniform_wkk_sharper}
-    令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。令$C$是由算法\ref{alg: uniform_wkk}中$\pi$所对应的中心点. 假设我们均匀不放回的采样$s$个点，如果，
+    令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。令$C$是由算法\ref{alg: uniform_wkk}中$\pi'$所对应的中心点. 假设我们均匀不放回的采样$s$个点，如果，
     \begin{equation*}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{\beta^2 m^2}{2\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
     \end{equation*}
@@ -57,3 +36,24 @@
     以至少 $1-2\delta$的概率, 其中$\Delta = \max\limits_{i,j}\norm{\phi(x_i) - \phi(x_j)}^2$是高维下数据直径的平方, $m = \Psi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})/n$是点到其对应的中心点的距离的平均值，$c$是一个划分无关的常数，$Ncut^*$是最优的Ncut。
 \end{theorem}
 由于证明和前面$k$-means的很相似，这里不再详细展开，唯一需要注意的是在得到$\Psi(\mathcal{X},C) \leq (\alpha+\beta) \Psi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})$后，将式\ref{eq: wkk_spectral_clustering}带入即可完成证明。
+\begin{algorithm}
+	\SetNoFillComment
+    \caption{基于均匀采样和带权kernel $k$-means的谱聚类算法}\label{alg: uniform_wkk}
+    \KwIn{数据集$\mathcal{X}$，类数目$k$，采样数$s$，相似度矩阵$A$，度矩阵$D$}
+    \KwOut{$\mathcal{X}$的$k$个划分}
+    $S \gets$ 从$1,2,...,n$中均匀采样$s$个数字\\
+    $W \gets D,K \gets D^{-1}AD^{-1}$\\
+    $W_s \gets W(S,S), K_s \gets K(S,S)$\\
+    $\pi' \gets$ 基于$W_s$和$K_s$，在带权$S$上运行一个$\alpha$近似算法\\
+    \tcc{把点靠到高维中由采样点得到的中心点上}
+    \For{$i = 1,...,n$}{
+    	\For{$c = 1,...,k$}{
+    		\begin{equation*}
+	    	d(a_i,m_c) \gets K_{i i}-\frac{2 \sum_{a_{j} \in \pi'_{c}} w_{j} K_{i j}}{\sum_{a_{j} \in \pi'_{c}} w_{j}}+\frac{\sum_{a_{j}, a_{l} \in \pi'_{c}} w_{j} w_{l} K_{j l}}{\left(\sum_{a_{j} \in \pi'_{c}} w_{j}\right)^{2}}
+	    	\end{equation*}\\
+    	}
+    	$j \gets \argmin\limits_{c = 1,2,...,k} d(a_i,m_c)$\\
+    	$Y_{ij} \gets 1$
+    }
+    \textbf{返回}$Y$
+\end{algorithm}
