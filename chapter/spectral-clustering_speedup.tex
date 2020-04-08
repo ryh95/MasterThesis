@@ -158,9 +158,10 @@ Nyström 方法是一种半正定矩阵近似方法，可以有效近似半正�
 \begin{equation*}
     Z = U_{Z}\Sigma_{Z}V_Z^T
 \end{equation*}
+
 这个基于Nyström方法加速谱聚类的方法总结见算法\ref{alg: Nyström spectral}，这里$\hat{U}_{:k}$是$\hat{U}$最大的$k$个特征值对应的特征向量。该算法的时间复杂度是$O(nm^2+m^3)$，如果$m$比较大，时间开销还是会比较大，文献\cite{li2011time,choromanska2013fast}对此做了进一步改进。
 % remark: 调整算法的输入，让算法更清楚，写算法的时间复杂度
-\begin{algorithm}
+\begin{algorithm}[h]
     \caption{Nyström 方法加速谱聚类}\label{alg: Nyström spectral}
     \KwIn{近似的相似度矩阵$\hat{A}$}
     \KwOut{归一化拉普拉斯矩阵$L_n$最小的$k$个特征值对应的特征向量}
@@ -188,6 +189,15 @@ Nyström 方法是一种半正定矩阵近似方法，可以有效近似半正�
     \item 再将剩下的点靠到已有的解上得到全部数据点的划分
 \end{enumerate}
 这个框架下一个经典的算法是KASP\citing{yan2009fast}，算法描述见算法\ref{alg: KASP}，
+算法时间复杂度是$O(nmdt+m^3)$，其中$t$是Lloyd的迭代次数。那么，这个算法的近似误差是多少呢？这里，我们对文献\cite{yan2009fast}的分析做一个简单的总结。在算法\ref{alg: KASP}中$x_i$到$y_j$的关系是通过$k$-means建立的，这个$x_i$到$y_j$的关系也可以看做是$x_i$经过扰动得到的$y_j$，即$x_i+\epsilon_i = y_j$，这里$\epsilon_i$是数据点的扰动，所以这里的$k$-means可以看做一种将$\mathcal{X}$扰动到$Y$的过程，扰动后的结果是$$\mathcal{X}' = \{y_1,...,y_1,y_2,...,y_2,...,y_k,...,y_k\}$$，令$y_i$的重复次数是$r_i$，则$\sum_{i=1}^k r_i = n$。一般的，我们令扰动后的结果是$\tilde{\mathcal{X}} = \{x_1+\epsilon_1,...,x_n+\epsilon_n\}$，考虑基于$\mathcal{X}$和$\tilde{\mathcal{X}}$的谱聚类结果的区别$\rho$，定义$$\rho=\frac{1}{n} \sum_{i=1}^{n} \mathbb{I}\left\{I_{i} \neq \tilde{I}_{i}\right\}$$，$\mathbb{I}$是指示函数，内里表达式如果为真就是1，$I = (I_1,...,I_n)$，$I_i$表示了点$x_i$的类id，$\tilde{I} = (\tilde{I}_1,...,\tilde{I}_n)$，$\tilde{I}_i$表示了点$\tilde{x}_i$的类id。基于文献\cite{huang2009spectral}的工作，可得如下定理。
+\begin{theorem}[KASP的理论保证]
+    在文献\cite{yan2009fast}中定理3假设条件成立情况下，有$\rho \leq O\left(\frac{k}{g_{0}^{2}}\|L-\tilde{L}\|_{F}\right)$，其中$g_0$是一个依赖谱间距(spectral gap)的值，$L$和$\tilde{L}$分别对应$\mathcal{X}$和$\tilde{\mathcal{X}}$的拉普拉斯矩阵。同时，如果文献\cite{yan2009fast}中定理6假设成立，则下式会以一个大概率成立
+    \begin{equation*}
+        \|L-\tilde{L}\|_{F} \leq O\left(\sigma_{\epsilon}^{(2)}+\sigma_{\epsilon}^{(4)}\right)
+    \end{equation*}
+    其中$\sigma_{\epsilon}^{(2)}$和$\sigma_{\epsilon}^{(4)}$是扰动项$\epsilon$的范数$\norm{\epsilon}$的二阶和四阶矩。
+\end{theorem}
+由上面两个理论界，$\rho$就可以被$\norm{\epsilon}$的二阶和四阶矩限定住，而Lloyd算法实际是在最小化二阶矩，从这一点来讲，用$k$-means得到采样集的过程有理论支持。除去Lloyd算法得到采样集，还有一个算法叫eSPEC也可以用来得到采样集，详见文献\cite{wang2009approximate}。
 \begin{algorithm}
     \caption{KASP}\label{alg: KASP}
     \KwIn{数据集$\mathcal{X}　= \{x_1,x_2,...,x_n\}$，类数目$k$，采样数目$m$}
@@ -198,20 +208,11 @@ Nyström 方法是一种半正定矩阵近似方法，可以有效近似半正�
     对任意$x_i$，根据$\mathcal{X}$和$Y$的关联字典查找$y_j$，再根据$y_j$的类id，得到$x_i$的类id\\
     \textbf{返回}$\mathcal{X}$的$k$个划分
 \end{algorithm}
-算法时间复杂度是$O(nmdt+m^3)$，其中$t$是Lloyd的迭代次数。那么，这个算法的近似误差是多少呢？这里，我们对文献\cite{yan2009fast}的分析做一个简单的总结。在算法\ref{alg: KASP}中$x_i$到$y_j$的关系是通过$k$-means建立的，这个$x_i$到$y_j$的关系也可以看做是$x_i$经过扰动得到的$y_j$，即$x_i+\epsilon_i = y_j$，这里$\epsilon_i$是数据点的扰动，所以这里的$k$-means可以看做一种将$\mathcal{X}$扰动到$Y$的过程，扰动后的结果是$$\mathcal{X}' = \{y_1,...,y_1,y_2,...,y_2,...,y_k,...,y_k\}$$，令$y_i$的重复次数是$r_i$，则$\sum_{i=1}^k r_i = n$。一般的，我们令扰动后的结果是$\tilde{\mathcal{X}} = \{x_1+\epsilon_1,...,x_n+\epsilon_n\}$，考虑基于$\mathcal{X}$和$\tilde{\mathcal{X}}$的谱聚类结果的区别$\rho$，定义$$\rho=\frac{1}{n} \sum_{i=1}^{n} \mathbb{I}\left\{I_{i} \neq \tilde{I}_{i}\right\}$$，$\mathbb{I}$是指示函数，内里表达式如果为真就是1，$I = (I_1,...,I_n)$，$I_i$表示了点$x_i$的类id，$\tilde{I} = (\tilde{I}_1,...,\tilde{I}_n)$，$\tilde{I}_i$表示了点$\tilde{x}_i$的类id。基于文献\cite{huang2009spectral}的工作，可得如下定理。
-\begin{theorem}[KASP的理论保证]
-    在文献\cite{yan2009fast}中定理3假设条件成立情况下，有$\rho \leq O\left(\frac{k}{g_{0}^{2}}\|L-\tilde{L}\|_{F}\right)$，其中$g_0$是一个依赖谱间距(spectral gap)的值，$L$和$\tilde{L}$分别对应$\mathcal{X}$和$\tilde{\mathcal{X}}$的拉普拉斯矩阵。同时，如果文献\cite{yan2009fast}中定理6假设成立，则下式会以一个大概率成立
-    \begin{equation*}
-        \|L-\tilde{L}\|_{F} \leq O\left(\sigma_{\epsilon}^{(2)}+\sigma_{\epsilon}^{(4)}\right)
-    \end{equation*}
-    其中$\sigma_{\epsilon}^{(2)}$和$\sigma_{\epsilon}^{(4)}$是扰动项$\epsilon$的范数$\norm{\epsilon}$的二阶和四阶矩。
-\end{theorem}
-由上面两个理论界，$\rho$就可以被$\norm{\epsilon}$的二阶和四阶矩限定住，而Lloyd算法实际是在最小化二阶矩，从这一点来讲，用$k$-means得到采样集的过程有理论支持。除去Lloyd算法得到采样集，还有一个算法叫eSPEC也可以用来得到采样集，详见文献\cite{wang2009approximate}。
 
 \subsection{低秩构建相似度矩阵}
 除去上述的两种方法，还有一种基于landmark/anchor的方法\citing{liu2010large,cai2014large}，landamark/anchor其实也是一些采样点，不过这里采样是为构建相似度矩阵做准备，这类方法思路如下。
 
-首先，通过Lloyd或者一些其他的采样方法得到一个采样集$W \in \R^{d \times m}$，$m$是采样数，下一步是把这$m$个点当做一组基，用这组基去表示$n$个点使得$\mathcal{X} \approx WB$，这里$B \in \R^{n \times m}$即是根据基得到的表示矩阵。有了$B$，我们就可以用$B$去构建相似度矩阵$A$，$$A = B\Delta^{-1}B$$，这里$\Delta$是一个对角矩阵，其中$\Delta_{jj} = \sum_{i=1}^n B_{ij}$，这个对角阵起一个归一化的作用。这里用$BB^T$表示$A$的一个直觉是，如果两个点的$m$维表示比较接近的话，这两个点的相似度应该比较高，那么反过来可以用他们的内积来表示他们的相似度。这个相似度矩阵$A$的一个好处是，可以令$P = B\Delta^{-1/2}$，从而让$A = PP^T$，这样就可通过对$P$做奇异值分解得到$A$的特征向量，从而让分解的时间复杂度降到$O(nm^2)$。一种构建$B$的方法是求解下式\citing{chen2017scalable,nie2016constrained}。$$\min _{B_i \mathbf{1}=1, B_i \geq 0} \sum_{j=1}^{m} B_{i j}\left\|\mathbf{x}_{i}-\mathbf{w}_{j}\right\|_{2}^{2}+\gamma \sum_{j=1}^{m} B_{i j}^{2}$$，这里$B_i$是$B$的第$i$行。
+首先，通过Lloyd或者一些其他的采样方法得到一个采样集$W \in \R^{d \times m}$，$m$是采样数，下一步是把这$m$个点当做一组基，用这组基去表示$n$个点使得$\mathcal{X} \approx WB$，这里$B \in \R^{n \times m}$即是根据基得到的表示矩阵。有了$B$，我们就可以用$B$去构建相似度矩阵$A$，$$A = B\Delta^{-1}B$$ 这里$\Delta$是一个对角矩阵，其中$\Delta_{jj} = \sum_{i=1}^n B_{ij}$，这个对角阵起一个归一化的作用。这里用$BB^T$表示$A$的一个直觉是，如果两个点的$m$维表示比较接近的话，这两个点的相似度应该比较高，那么反过来可以用他们的内积来表示他们的相似度。这个相似度矩阵$A$的一个好处是，可以令$P = B\Delta^{-1/2}$，从而让$A = PP^T$，这样就可通过对$P$做奇异值分解得到$A$的特征向量，从而让分解的时间复杂度降到$O(nm^2)$。一种构建$B$的方法是求解下式\citing{chen2017scalable,nie2016constrained}。$$\min _{B_i \mathbf{1}=1, B_i \geq 0} \sum_{j=1}^{m} B_{i j}\left\|\mathbf{x}_{i}-\mathbf{w}_{j}\right\|_{2}^{2}+\gamma \sum_{j=1}^{m} B_{i j}^{2}$$ 这里$B_i$是$B$的第$i$行。
 
 综上，我们总结了三种基于采样的加速谱分解的方法，他们的共同点是都基于采样，但是各个方法的采样目的不同。对Nyström方法来说，采样是为了低秩近似相似度矩阵，而低秩近似带来的一个副产品是可以近似特征向量，这个方法是不用知道相似度矩阵是怎么构建的的，假设采样$m$个点，只需要计算$n \times m$的相似度矩阵，分解$m \times m$的那一部分就可以得到近似的特征向量，另一方面Nyström方法有很好的理论支撑，基于Nyström方法的大都有清晰的理论结果，Nyström方法的延伸也很广，可以广泛用在矩阵近似上，比如kernel近似等\citing{wang2014efficient,wang2014modified,sun2015review}。对KASP来说，采样是为了减少数据，分解的是一个$m \times m$的矩阵，缺点是得不到近似的特征向量，因此方法的扩展性不是很好。对基于landmark/anchor的方法来说，采样的目的是得到一个相似度矩阵，采样的副产品是这个相似度矩阵由于构建方法的关系可较为方便计算特征向量，这个方法的缺点也很明显，这个方法得到的特征向量和相似度构建方式紧密绑定，如果相似度矩阵是别人给的或者某种其他规定的方式生成的的话，这个方式是没有办法用的，另外，这个方法分解的时间复杂度也比前两种方法高。
 

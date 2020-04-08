@@ -170,7 +170,7 @@
     结合定理\ref{theo: uniform_k-means_sharper}，式(\ref{eq: poly log1})和(\ref{eq: poly log2})，命题得证。
 \end{proof}
 
-\section{Weighted \texorpdfstring{$k$}{k}-means++}
+\section{带权\texorpdfstring{$k$}{k}-means++}
 在前面的算法\ref{alg: kmeans||_seeding}和\ref{alg: reduce_k-means2}中，都需要解决带权$k$-means问题，本小节我们将$k$-means++算法扩展到了带权重$k$-means问题上，并证明了这一算法有$O(\log k)$的近似系数。首先，带权$k$-means++算法见算法\ref{alg: weighted Kmeans++ seeding}。
 \begin{algorithm}
     \caption{weighted $k$-means++ seeding}\label{alg: weighted Kmeans++ seeding}

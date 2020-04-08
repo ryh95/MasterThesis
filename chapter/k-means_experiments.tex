@@ -43,10 +43,10 @@
 %为什么这么取值？应该用常数近似算法不应该用kmeans++，Lloyd迭代次数是多少？
 算法K-M$\text{C}^2$, Double-K-M$\text{C}^2$和算法\ref{alg: uniform_k-means}的参数如下：Double-K-M$\text{C}^2$和K-M$\text{C}^2$的游走次数$u = 200$，Double-K-M$\text{C}^2$采样量$s = 1.5*\log^2 n$，算法\ref{alg: uniform_k-means}的采样量$s' = 0.7*\log^4 n$，$\alpha$近似算法是Weighted $k$-means++接上Lloyd（在算法\ref{alg: uniform_k-means}中$\alpha$近似算法的权重设为1）。所有数据集的特征都做了标准化（standardize），由于这些算法都有随机性，实验将在每个数据集上重复40次然后汇报平均值。
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{syn-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{syn-sum-squared-distances.jpg}} \\
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{real-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{real-sum-squared-distances.jpg}}
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-running-time.jpg}}
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-sum-squared-distances.jpg}} \\
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{real-running-time.jpg}}
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{real-sum-squared-distances.jpg}}
     \caption{传统聚类任务的结果。（a）合成数据集上的距离计算次数；（b）合成数据集上的$k$-means目标函数值；（c）真实数据集上的距离计算次数；（d）真实数据集上的$k$-means目标函数值}
     \label{fig: kmeans-experiments}
 \end{figure}
@@ -89,8 +89,8 @@ $K \succeq 0$表示$K$是半正定矩阵。由于三个算法只返回$k$个点�
 基于均匀不放回采样的kernel版、kernel K-M$\text{C}^2$和kernel Double-K-M$\text{C}^2$的参数配置如下：均匀不放回的采样数$s' = 0.4*\log^4 n$，kernel $k$-means++是均匀不放回的$\alpha$近似算法，kernel K-M$\text{C}^2$和kernel Double-K-M$\text{C}^2$的游走次数都是200，kernel Double-K-M$\text{C}^2$的采样量是$s = 0.25*\log^2 n$，所有图片的$k$都设为5，所有算法重复30次取平均值。
 
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{image-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.44\linewidth]{image-obj.jpg}}
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{image-running-time.jpg}}
+    \subfloat[]{\includegraphics[width=0.49\linewidth]{image-obj.jpg}}
     \caption{图像分割任务上的结果。（a）图片数据集上的距离计算次数；（b）图片数据集上的kernel $k$-means目标函数值}
     \label{fig: image running time & ncut}
 \end{figure}

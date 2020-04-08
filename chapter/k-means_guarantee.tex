@@ -231,7 +231,7 @@ $\eta(\mathcal{X})$就可以被限定住，游走就能很快收敛到平稳分�
 \end{enumerate}
 因此，需要提出新的算法解决这些问题。
 
-AFK-M$\text{C}^2$\cite{bachem2016fast}通过使用提议分布（proposal distribution）很好的解决了这些问题，首先通过该提议分布，$\zeta(\mathcal{X})$的假设得以废弃；第二，一种新的理论分析使得在不假设$\eta(\mathcal{X})$的情况下也能获得解的质量的理论保证；最后， 新的结果表明了游走次数$m$和算法质量之间的权衡。 AFK-M$\text{C}^2$描述在算法\ref{alg:AFK-MC^2 seeding}中。
+AFK-M$\text{C}^2$\citing{bachem2016fast}通过使用提议分布（proposal distribution）很好的解决了这些问题，首先通过该提议分布，$\zeta(\mathcal{X})$的假设得以废弃；第二，一种新的理论分析使得在不假设$\eta(\mathcal{X})$的情况下也能获得解的质量的理论保证；最后， 新的结果表明了游走次数$m$和算法质量之间的权衡。 AFK-M$\text{C}^2$描述在算法\ref{alg:AFK-MC^2 seeding}中。
 \begin{algorithm}
     \SetNoFillComment
     \caption{AFK-M$\text{C}^2$ seeding}\label{alg:AFK-MC^2 seeding}
@@ -281,8 +281,8 @@ AFK-M$\text{C}^2$\cite{bachem2016fast}通过使用提议分布（proposal distri
 \end{corollary}
 此时，算法中预处理花费时间为$O(nd)$，主要循环花费时间为$O(k^3 d \log k)$。实验结果表明，对于大数据集，在0到1\%的相对误差下，AFK-M$\text{C}^2$算法要比$k$-means++快200到1000倍。
 
-除去前述的假设1和2，也有些其他假设值得注意。 Ben-David\cite{ben2004framework}通过引入聚类描述方案（clustering description scheme）
+除去前述的假设1和2，也有些其他假设值得注意。 Ben-David\citing{ben2004framework}通过引入聚类描述方案（clustering description scheme）
 并在其上添加性质，获得了常数近似系数的解，且该算法的时间复杂度是常数。文献\cite{ben2004framework}的主要假设叫做$\alpha$-m-covering，
 它要求对领域集合（domain set）中的任何子集$S$，通过应用聚类描述方案到$S$的一个$l$元组上，$S$的最优聚类能被$\alpha$近似。
 
-至此， 本节梳理了一些有理论保证的算法同时在实验上对他们进行了比较，值得注意的是文献\cite{awasthi2015hardness,lee2017improved}指出 $k$-means问题是APX难的，多项式时间内不存在近似系数小于1.0013 的解，目前最好的近似系数是 6.357\cite{ahmadian2017better}。不过，近似系数越小的算法越慢，越难以实用。另外，$k$-means问题可以构造PTAS（Polynomial Time Approximation Scheme）的解，即在多项式时间内取得1+$\epsilon$的近似，相关文献有\cite{feldman2007ptas,jaiswal2014simple,friggstad2019local}。
+至此， 本节梳理了一些有理论保证的算法同时在实验上对他们进行了比较，值得注意的是文献\cite{awasthi2015hardness,lee2017improved}指出 $k$-means问题是APX难的，多项式时间内不存在近似系数小于1.0013 的解，目前最好的近似系数是 6.357\citing{ahmadian2017better}。不过，近似系数越小的算法越慢，越难以实用。另外，$k$-means问题可以构造PTAS（Polynomial Time Approximation Scheme）的解，即在多项式时间内取得1+$\epsilon$的近似，相关文献有\cite{feldman2007ptas,jaiswal2014simple,friggstad2019local}。

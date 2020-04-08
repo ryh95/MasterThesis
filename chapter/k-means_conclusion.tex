@@ -1,9 +1,12 @@
 \section{本章小结}
-至此，本章梳理了在$k$-means问题上的加速算法，有理论保证的算法和两者都有的算法，这些算法的相关结论总结在表\ref{tab: kmeans_algorithms}中，其中$O(\mathcal{A}_c)$是$\alpha$近似算法的时间复杂度。根据表\ref{tab: kmeans_algorithms}，我们对这些算法分别从速度、理论保证和实用性这三个维度进行评价。这些算法按照时间复杂度从小到大排序如下：K-M$\text{C}^2$、均匀不放回采样(2)、AFK-M$\text{C}^2$、Lightweight　Coreset、$k$-means++、算法\ref{alg: reduce_k-means2}(1)、$\epsilon$-Coreset、$k$-means++\&swap、$k$-means\(\vert \vert\) seeding、算法\ref{alg: reduce_k-means2}(2)和p-swap。在排序中，1、2名是次线性时间（需要假设），3、4名在$O(nd)$量级，5、6、7名在$O(nkd)$量级，最后4名从$O(ndk^2)$逐渐增加到$O(n^3)$。这些算法中后6名有常数近似，$k$-means++是$O(\log k)$，而前4名不是要假设就是要加方差项。最后一个，算法实用与否也非常重要，从实用角度讲，这些算法可以分为3类，第一类是AFK-M$\text{C}^2$、Lightweight　Coreset、$\epsilon$-Coreset、$k$-means\(\vert \vert\) seeding，这些算法并行性较好，也无需假设，非常实用；第二类是K-M$\text{C}^2$、均匀不放回采样(2)、$k$-means++、算法\ref{alg: reduce_k-means2}(1)、算法\ref{alg: reduce_k-means2}(2)、$k$-means++\&swap，这些算法不是要假设就是有强序列属性不利于并行，实用性一般；最后剩下的就是p-swap，时间复杂度高，不实用。
-\begin{table}
-	\caption{理论保证及加速相关算法结果汇总}
-	\label{tab: kmeans_algorithms}
-	\begin{tabular}{llll}
+至此，本章梳理了在$k$-means问题上的加速算法，有理论保证的算法和两者都有的算法，这些算法的相关结论总结在表\ref{tab: kmeans_algorithms}中，其中$O(\mathcal{A}_c)$是$\alpha$近似算法的时间复杂度。根据表\ref{tab: kmeans_algorithms}，我们对这些算法分别从速度、理论保证和实用性这三个维度进行评价。这些算法按照时间复杂度从小到大排序如下：K-M$\text{C}^2$、均匀不放回采样(2)、AFK-M$\text{C}^2$、Lightweight　Coreset、$k$-means++、算法\ref{alg: reduce_k-means2}(1)、$\epsilon$-Coreset、$k$-means++\&swap、$k$-means\(\vert \vert\) seeding、算法\ref{alg: reduce_k-means2}(2)和p-swap。在排序中，1、2名是次线性时间（需要假设），3、4名在$O(nd)$量级，5、6、7名在$O(nkd)$量级，最后4名从$O(ndk^2)$逐渐增加到$O(n^3)$。这些算法中后6名有常数近似，$k$-means++是$O(\log k)$，而前4名不是要假设就是要加方差项。最后一个，算法实用与否也非常重要，从实用角度讲，这些算法可以分为3类，第一类是AFK-M$\text{C}^2$、Lightweight　Coreset、$\epsilon$-Coreset、$k$-means\(\vert \vert\) seeding，这些算法并行性较好，也无需假设，非常实用；第二类是K-M$\text{C}^2$、均匀不放回采样(2)、$k$-means++、算法\ref{alg: reduce_k-means2}(1)、算法\ref{alg: reduce_k-means2}(2)、$k$-means++\&swap，这些算法不是要假设就是有强序列属性不利于并行，实用性一般；最后剩下的就是p-swap，时间复杂度高，不实用。总结来说，如果追求速度推荐使用K-M$\text{C}^2$、均匀不放回采样(2)、AFK-M$\text{C}^2$和Lightweight Coreset，如果追求聚类质量推荐使用$\epsilon$-Coreset和$k$-means\(\vert \vert\) seeding。% remark: verify argument on $\epsilon$-Coreset
+
+{\fontsize{10}{12}\selectfont
+
+	\begin{longtable}{llll}
+		% \small \\
+		\caption{理论保证及加速相关算法结果汇总}
+		\label{tab: kmeans_algorithms} \\
 		\toprule
 		算法 & 采样量 & 时间复杂度 & 聚类质量 \\
 		\midrule
@@ -21,8 +24,8 @@
 		$k$-means\(\vert \vert\) & \multirow{2}{*}{$O(lt)$} & \multirow{2}{*}{$O(ndlt)$} & $\E[\varphi_S(\mathcal{X})] \leq 2(\frac{k}{el})^t \text{Var}(\mathcal{X})$ \\
 		sampling(2) & & & $+ 26\varphi_{\text{OPT}}(\mathcal{X})$\\
 
-		$k$-means\(\vert \vert\)& \multirow{2}{*}{$O(lt)$} & $O(ndlt)+O(ndlt)$ & \multirow{2}{*}{$\E[\varphi_C(\mathcal{X})] \leq O(\alpha)\varphi_{\text{OPT}}(\mathcal{X})$} \\
-		seeding & & $+O(\mathcal{A}_c)$ & \\
+		$k$-means\(\vert \vert\)& \multirow{2}{*}{$O(lt)$} & $O(ndlt)+O(ndlt)$ & $\E[\varphi_C(\mathcal{X})] \leq O(\alpha)$ \\
+		seeding & & $+O(\mathcal{A}_c)$ & $\cdot \varphi_{\text{OPT}}(\mathcal{X})$ \\
 
 		\multirow{2}{*}{K-M$\text{C}^2$} & \multirow{2}{*}{$k$} & \multirow{2}{*}{$O(k^3 d \log^2 n \log k)$} & $\E[\varphi_C(\mathcal{X})] \leq O(\log k)$  \\
 		& & & $\cdot \varphi_{\text{OPT}}(\mathcal{X})$ \\
@@ -42,21 +45,21 @@
 		均匀不放回 & \multirow{2}{*}{$s = O(\ln(\frac{1}{\delta})\frac{\alpha^2}{\beta^2}k^2\log^4 n)$} & \multirow{2}{*}{$O(k^2 \log^4 n)+O(\mathcal{A}_c)$} & $\E[\varphi_C(\mathcal{X})] \leq (\alpha+\beta)$ \\
 		采样(2) &  &  & $\cdot \varphi_{\text{OPT}}(\mathcal{X})$ \\
 
-		\multirow{2}{*}{算法\ref{alg: reduce_k-means2}(1)} & \multirow{2}{*}{$O(k)$} & $O(nkd)+O(nkd)$ & \multirow{2}{*}{$\E[\varphi_C(\mathcal{X})] \leq O(\alpha) \varphi_{\text{OPT}}(\mathcal{X})$} \\
-		& & $+O(\mathcal{A}_c)$ & \\
+		\multirow{2}{*}{算法\ref{alg: reduce_k-means2}(1)} & \multirow{2}{*}{$O(k)$} & $O(nkd)+O(nkd)$ & $\E[\varphi_C(\mathcal{X})] \leq O(\alpha)$ \\
+		& & $+O(\mathcal{A}_c)$ & $\cdot \varphi_{\text{OPT}}(\mathcal{X})$ \\
 
 		\multirow{2}{*}{算法\ref{alg: reduce_k-means2}(2)} & \multirow{2}{*}{$s = \Theta\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}} \log ^{d / 2}\left(\frac{k \log n}{\delta^{d / 2} \varepsilon^{d}}\right)\right)$} & $O(nsd)+O(nsd)$ & $\E[\varphi_C(\mathcal{X})] \leq \alpha(1+O(\epsilon))$ \\
 		& & $+O(\mathcal{A}_c)$ & $\cdot \varphi_{\text{OPT}}(\mathcal{X})$ \\
 
 		\bottomrule
-	\end{tabular}
-\end{table}
-总结来说，如果追求速度推荐使用K-M$\text{C}^2$、均匀不放回采样(2)、AFK-M$\text{C}^2$和Lightweight Coreset，如果追求聚类质量推荐使用$\epsilon$-Coreset和$k$-means\(\vert \vert\) seeding。% remark: verify argument on $\epsilon$-Coreset
+	\end{longtable}
+
+}
 
 梳理完算法后，我们从理论上证明了基于均匀采样的算法\ref{alg: uniform_k-means}能有更好的近似系数，具体来说从$4(\alpha+\beta)$降到了$\alpha+\beta$，并且在K-M$\text{C}^2$所依赖的两个假设，假设1和2成立的情况下，均匀采样的数目可以在$O(\log^4 n)$数量级，从而在次线性时间内取得了常数近似的解。
 接着实验表明，通过多采样一些点，确实可以让均匀采样比K-M$\text{C}^2$有更好的聚类质量，在传统聚类任务和图像分割任务中这一点均有体现。
 最后我们指出一些可能的未来研究方向：
-\begin{enumerate}
+\begin{enumerate}[label=\arabic*)]
 	\item 在次线性时间内有理论保证且无需假设的算法，比如近似系数是$O(\log n)$的等等
 	\item 提出新的次线性时间算法，依靠新的易于验证的假设
 	\item 探索基于距离的自适应采样的新性质，比如进一步缩小定理\ref{theo: k-means++ overseeding2}的界，比如定义$d'(x,C) = \norm{x - c_1}+\norm{x-c_2}$，$c_1$和$c_2$分别是$C$中离$x$最近的和第二近的点，根据$d'$来挑选类，增加跳转到不同最优类的概率，以改进理论界等等。

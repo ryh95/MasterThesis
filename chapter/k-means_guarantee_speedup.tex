@@ -43,7 +43,7 @@
     \end{equation*}
     以至少0.03的概率成立（通过重复实验$\log (1/\delta)$次取最好结果，概率可以被增加到$1-\delta$）
 \end{theorem}
-该定理说的是用$k$-means++ overseeding采样$O(k)$个点，所有点到采样点的距离平方和就能到常数20，注意算法\ref{alg: reduce_k-means2}的目标是常数近似系数，不然使用$k$-means++可以直接有$O(\log k)$的近似，使用$k$-means++ overseeding就会失去意义。另外，Dennis\cite{wei2016constant}对$k$-means++ overseeding给出了一个更紧的理论界。
+该定理说的是用$k$-means++ overseeding采样$O(k)$个点，所有点到采样点的距离平方和就能到常数20，注意算法\ref{alg: reduce_k-means2}的目标是常数近似系数，不然使用$k$-means++可以直接有$O(\log k)$的近似，使用$k$-means++ overseeding就会失去意义。另外，Dennis\citing{wei2016constant}对$k$-means++ overseeding给出了一个更紧的理论界。
 \begin{theorem}[$k$-means++ overseeding解的理论保证2]
     \label{theo: k-means++ overseeding2}
     令$S$是$k$-means++ overseed出来的点集，且$|S| = \beta k$，$\beta \geq 1$，则有

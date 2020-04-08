@@ -20,8 +20,8 @@
 参与实验的算法是算法\ref{alg: uniform_wkk}，其中$\alpha$近似算法是带权kernel $k$-means++，实验基准算法是带权kernel $k$-means++后接带权kernel Lloyd（即算法\ref{alg: uniform_wkk}不采样的版本）。实验中相似度矩阵$A$的构建方式采用了文献\cite{chen2017scalable}的方法，anchor数目是数据点数目的20\%，算法\ref{alg: uniform_wkk}的采样数目也是数据点数目的20\%，两个算法的最大迭代次数都是30。由于随机性，算法\ref{alg: uniform_wkk}和基准算法在每个数据集上都会重复20次，取平均值汇报。Ncut和时间(秒)分别用来评价谱聚类聚类质量和聚类速度。
 
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.45\linewidth]{sp-running_time.jpg}}
-    \subfloat[]{\includegraphics[width=0.45\linewidth]{sp-Ncuts.jpg}}
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-running_time.jpg}}
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-Ncuts.jpg}}
     \caption{谱聚类结果。（a）聚类所花时间(秒)；（b）谱聚类的Ncut；}
     \label{fig: sp-experiments}
 \end{figure}
