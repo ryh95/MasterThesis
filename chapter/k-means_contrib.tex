@@ -5,42 +5,42 @@
 \begin{theorem}[均匀不放回采样的解的质量2]
     \label{theo: uniform_k-means_sharper}
     令 $0 < \delta <1/2$, $\alpha \geq 1$, $\beta >0$是近似的参数。 令 C 是由算法 \ref{alg: uniform_k-means}返回的点. 假设我们均匀不放回的采样s个点，使得,
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{\beta^2 m^2}{2\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
+    \end{equation}
     则，我们有
-    \begin{equation*}
+    \begin{equation}
     \varphi(\mathcal{X},C) \leq (\alpha + \beta)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
+    \end{equation}
     以至少 $1-2\delta$的概率, 其中$\Delta = \max\limits_{i,j}\norm{x_i - x_j}^2$是数据直径的平方, $m = \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})/n$是点到其对应的中心点的距离的平均值。
 \end{theorem}
 为了证明定理\ref{theo: uniform_k-means_sharper}，我们需要一些工具，首先介绍一个concentration bound，名叫Serfling bound，concentration bound描述的是随机变量同其均值的联系，更多细节在附录中描述。
 \begin{lemma}[Serfling bound]
     记均匀不放回采样得到的随机变量是$X_1 \ldots X_s$，其中$0 \leq X_i \leq \Delta$。则有
-    \begin{equation*}
+    \begin{equation}
     P[\sum_{i=1}^s \frac{X_i - \E[X_i]}{s} \geq \gamma] \leq \exp(-\frac{2s\gamma^2}{(1-(s-1)/n)\Delta^2})
-    \end{equation*}
+    \end{equation}
     成立，其中$\gamma$, $\Delta$是任意大于0的数字。
 \end{lemma}
 接着引入下面的定义，该定义是定义\ref{def: k-means_quality}的延伸。可以这样理解这个定义，当我们用减少数据的方法加速聚类的时候，误差来自与两方面，一方面是聚类算法在采样点上聚类产生，由$\alpha$量化，另一方面由采样算法产生，由$\beta$量化。
 \begin{definition}[$k$-means问题解的质量2]
     令$\alpha \geq 1$，$\beta > 0$，一个大小为$k$的集合$C$称为$k$-means的一个$\beta$-bad $\alpha$-approximation的解，如果有
-    \begin{equation*}
+    \begin{equation}
     \varphi(\mathcal{X},C) > (\alpha + \beta)\varphi(\mathcal{X},C_{\text{OPT}_k}^\mathcal{X})
-    \end{equation*}
+    \end{equation}
     否则，$C$称为一个$\beta$-good $\alpha$-approximation的解。
 \end{definition}
 有了这些工具后，我们证明两个关键引理
 \begin{lemma}
     \label{lem: S->C}
     令$S$是算法\ref{alg: uniform_k-means}的采样点，且
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{2\beta^2 m^2}{\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
+    \end{equation}
     记$C$是算法\ref{alg: uniform_k-means}返回的解，则我们有
-    \begin{equation*}
+    \begin{equation}
     \varphi(S,C) \leq (\alpha + \beta)sm
-    \end{equation*}
+    \end{equation}
     以至少1-$\delta$的概率成立，其中$\Delta$和$m$的定义同定理\ref{theo: uniform_k-means}中的一样。
 \end{lemma}
 \begin{proof}
@@ -51,9 +51,9 @@
     &\leq \text{exp}(-\frac{2 s \cdot \frac{\beta^2}{\alpha^2} \cdot m^2}{(1-s / n) \Delta^2})
     \end{align}
     根据Serfling bound，最后一步成立，令$\text{exp}(-\frac{2 s \cdot \frac{\beta^2}{\alpha^2} \cdot m^2}{(1-s / n) \Delta^2}) \leq \delta$，得到
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{2\beta^2 m^2}{\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
+    \end{equation}
     由于在$S$上运行一个$\alpha$近似的算法，我们有式(\ref{eq: kmeans_sharper2})成立
     \begin{align}
     \varphi(S,C) &\leq \alpha\varphi(S,C_{\text{OPT}_k}^S) \label{eq: kmeans_sharper2} \\
@@ -65,59 +65,57 @@
 \begin{lemma}
     \label{lem: S->C|C in X}
     令$S$是算法\ref{alg: uniform_k-means}中的采样点，且
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{2\beta^2 m^2}{\Delta^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
+    \end{equation}
     记$V$是$k$-means问题$2\beta$-bad $\alpha$-approximation的解集，$C$是任意$k$个点，则
-    \begin{equation*}
+    \begin{equation}
     P[\varphi(S,C) \leq (\alpha+\beta)sm | C \in V] \leq \delta
-    \end{equation*}
+    \end{equation}
     其中$\Delta$和$m$的定义同定理\ref{theo: uniform_k-means}中的一样。
 \end{lemma}
 \begin{proof}
-    令$Y_i = \text{d}(v_i,C)^2$，其中$v_i \in S$，给定$C \in V$，我们有$\E[Y_i] > (\alpha+2\beta)m$。故,
-    \begin{align*}
+    令$Y_i = \text{d}(v_i,C)^2$，其中$v_i \in S$，给定$C \in V$，有$\E[Y_i] > (\alpha+2\beta)m$，故,
+    \begin{align}
     &P[\varphi(S,C) \leq (\alpha+\beta)sm | C \in V] \\
     &\leq P[(\sum_{i=1}^s Y_i) \leq \frac{\alpha+\beta}{\alpha+2\beta}s\E[Y_i]] \\
     &\leq P[(\sum_{i=1}^s Y_i) \leq (1-\frac{\beta}{\alpha+2\beta})s\E[Y_i]] \\
     &\leq P[(\sum_{i=1}^s \frac{Y_i - \E[Y_i]}{s}) \leq (-\frac{\beta}{\alpha+2\beta})\E[Y_i]] \\
     &\leq \exp(-\frac{2s(\frac{\beta}{\alpha+2\beta}\E[Y_i])^2}{(1-(s-1)/n)\Delta^2}) \\
     &\leq \exp(-\frac{2s\beta^2 m^2}{(1-(s-1)/n)\Delta^2})
-    \end{align*}
+    \end{align}
     令$\exp(-\frac{2s\beta^2 m^2}{(1-(s-1)/n)\Delta^2}) \leq \delta$，我们有
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{2\beta^2 m^2}{\Delta^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
+    \end{equation}
     引理得证。
 \end{proof}
 有了引理\ref{lem: S->C}和\ref{lem: S->C|C in X}，定理\ref{theo: uniform_k-means_sharper}证明如下。
 \begin{proof}
     令$C$是算法\ref{alg: uniform_k-means}的返回值，且采样数目
-    \begin{equation*}
+    \begin{equation}
     s \geq \ln(\frac{1}{\delta})(1+\frac{1}{n})/(\frac{2\beta^2 m^2}{\Delta^2 \alpha^2}+\frac{\ln(1/\delta)}{n})
-    \end{equation*}
-    根据引理\ref{lem: S->C}，我们有
-    \begin{gather*}
-        P[\varphi(S,C) \leq (\alpha + \beta)sm] \\
-        \begin{align}
-            &= P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in V] \\
-            & \qquad {} + P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in \bar{V}] \\
-            &\geq 1-\delta
-        \end{align}
-    \end{gather*}
-    其中$\bar{V}$是$k$-means问题的$2\beta$-good $\alpha$-approximation的解集。根据引理\ref{lem: S->C|C in X}，我们知道
-    \begin{align*}
+    \end{equation}
+    根据引理\ref{lem: S->C}，有
+    \begin{align}
+        &P[\varphi(S,C) \leq (\alpha + \beta)sm] \\
+        &= P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in V] \\
+        & \qquad {} + P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in \bar{V}] \\
+        &\geq 1-\delta
+    \end{align}
+    其中$\bar{V}$是$k$-means问题的$2\beta$-good $\alpha$-approximation的解集。根据引理\ref{lem: S->C|C in X}，有
+    \begin{align}
     &P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in V] \\
     &= P[\varphi(S,C) \leq (\alpha+\beta)sm | C \in V] \\
     &\qquad {} \cdot P[C \in V] \\
     &\leq \delta
-    \end{align*}
+    \end{align}
     因此，
-    \begin{align*}
+    \begin{align}
     P[C \in \bar{V}] 
     &\geq P[\varphi(S,C) \leq (\alpha + \beta)sm \quad \text{and} \quad C \in \bar{V}] \\
     &\geq 1-2\delta
-    \end{align*}
+    \end{align}
     用$\frac{1}{2}\beta$替换$\beta$，定理得证。
 \end{proof}
 
@@ -126,33 +124,33 @@
 \begin{theorem}
     \label{theo: poly log}
     令$0 < \delta <1/2$，$\alpha \geq 1$，$\beta >0$。假定假设1和2成立，令$C$是算法\ref{alg: uniform_k-means}返回的解，我们有
-    \begin{equation*}
+    \begin{equation}
     \varphi(\mathcal{X},C) \leq (\alpha + \beta)\varphi(\mathcal{X},C_{\text{OPT}_k}^\mathcal{X})
-    \end{equation*}
+    \end{equation}
     以至少$1-2\delta$的概率成立，如果采样数$s = O(\ln(\frac{1}{\delta})\frac{\alpha^2}{\beta^2}k^2\log^4 n)$
 \end{theorem}
 这个定理说明，如果在采样点上运行一个多项式时间复杂度常数近似系数的算法，我们就能在多项式对数时间复杂度下获得对于所有点来说常数近似系数的解。为了证明定理\ref{theo: poly log}，我们先证明一个引理
 \begin{lemma}
     \label{lem: Delta/m}
     如果假设1和2成立，可以知道
-    \begin{equation*}
+    \begin{equation}
     \frac{\Delta}{m} = O(k\log^2 n)
-    \end{equation*}
+    \end{equation}
     其中$\Delta$和$m$的定义同定理\ref{theo: uniform_k-means}中的一样。
 \end{lemma}
 \begin{proof}
     显然，
-    \begin{equation*}
+    \begin{equation}
     \max\limits_{x \in \mathcal{X}} \text{d}(x,\mu(\mathcal{X}))^2 \geq \frac{1}{4} \Delta
-    \end{equation*}
+    \end{equation}
     因此，
-    \begin{equation*}
+    \begin{equation}
     \frac{\max\limits_{x \in \mathcal{X}}\text{d}(x,\mu(\mathcal{X}))^2}{\frac{1}{n}\sum_{x' \in \mathcal{X}}\text{d}(x',\mu(\mathcal{X}))^2} \frac{\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})}{\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})} \geq \frac{1}{4} \frac{\Delta}{m}
-    \end{equation*}
+    \end{equation}
     根据推论\ref{cor: zeta_x}和\ref{cor: eta_x}
-    \begin{equation*}
+    \begin{equation}
     \zeta(\mathcal{X}) \eta(\mathcal{X}) = O(k\log^2 n) 
-    \end{equation*}
+    \end{equation}
     引理得证。
 \end{proof}
 现在我们证明定理\ref{theo: poly log}
@@ -162,12 +160,7 @@
     \label{eq: poly log1}
     s \geq \ln(\frac{1}{\delta})\frac{2\Delta^2 \alpha^2}{\beta^2 m^2}.
     \end{equation}
-    根据引理\ref{lem: Delta/m}，
-    \begin{equation}
-    \label{eq: poly log2}
-    \frac{\Delta}{m} = O(k\log^2 n)
-    \end{equation}
-    结合定理\ref{theo: uniform_k-means_sharper}，式(\ref{eq: poly log1})和(\ref{eq: poly log2})，命题得证。
+    根据引理\ref{lem: Delta/m}，定理\ref{theo: uniform_k-means_sharper}，和式(\ref{eq: poly log1})，命题得证。
 \end{proof}
 
 \section{带权\texorpdfstring{$k$}{k}-means++}
@@ -192,9 +185,9 @@
 \begin{theorem}
     \label{theo: weighted kmeans++}
     对于任意数据集$\mathcal{X}$，及对应的权重$w$
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_C(\mathcal{X})] \leq 8(\ln k + 2) \psi_\text{OPT}(\mathcal{X})
-    \end{equation*}
+    \end{equation}
     其中$C$是算法\ref{alg: weighted Kmeans++ seeding}的返回结果。
 \end{theorem}
 为了证明该定理，我们引入以下引理。
@@ -213,9 +206,9 @@
 \begin{corollary}
     \label{cor: expectation}
     对于任意一个最优类$A$，给定任意一个点$z \in \R^d$，令$\mu$是$A$的带权中心点，可得
-    \begin{equation*}
+    \begin{equation}
         \psi_z(A) = \psi_{\text{OPT}}(A) + (\sum_{i \in A}w_i) \norm{z-\mu}^2
-    \end{equation*}
+    \end{equation}
 \end{corollary}
 \begin{proof}
     令$X$是在类$A$中依照概率$P[X=a] = \frac{w_a}{\sum_{i \in A} w_i}$采样的点，$a$是$X$可能取的值。
@@ -224,55 +217,55 @@
         \mathbb{E}[\|X-\mathbb{E} X\|^{2}] = \sum_{a \in A} \frac{w_a}{\sum_{i \in A} w_i} \norm{a-\mu}^2 = \frac{1}{\sum_{i \in A} w_i} \psi_{\text{OPT}}(A) \label{eq: cor_expectation2}\\
         \|z-\mathbb{E} X\|^{2} = \norm{z-\mu}^2 \label{eq: cor_expectation3}
     \end{gather}
-    在等式\ref{eq: expectation1}左右两边同乘$\sum_{i \in A} w_i$，结合式\ref{eq: cor_expectation1}，\ref{eq: cor_expectation2}和\ref{eq: cor_expectation3}可得。
+    结合式\ref{eq: expectation1}，\ref{eq: cor_expectation1}，\ref{eq: cor_expectation2}和\ref{eq: cor_expectation3}可得。
 \end{proof}
 证明的基本思路是首先考察均匀采样一个点，这个点所在的类到这个点产生的距离平方和同这个类自身最优距离平方和的关系。然后考察基于$d^2$ weighting采样产生的一个点，这个点所在的类到这个点产生的距离平方和同这个类自身最优距离平方和的关系。给定$k$-means++的中间结果$C$，基于$C$任选$u$个没有被覆盖的最优类记为$\mathcal{X}_u$，其他的最优类记为$\mathcal{X}_c$。基于$C$用$d^2$ weighting采样$t$个点，把这些点和$C$放在一起记为$C'$。最后，我们考察$\psi_{C'}(\mathcal{X})$同$\psi_{C}(\mathcal{X}_c)$，$\psi_{C}(\mathcal{X}_u)$，$\psi_{\text{OPT}}(\mathcal{X}_c)$，$\psi_{\text{OPT}}(\mathcal{X}_u)$，$t$，$u$的关系。然后，利用这一关系证明定理\ref{theo: weighted kmeans++}。
 \begin{lemma}
     \label{lem: 2OPT_A}
     令$A$是任意一个最优类，记$Z$是从$A$中依照$P[Z = z] = \frac{w_z}{\sum_{i \in A} w_i}$概率分布采样的点，$z$是$Z$可能取的值，我们有
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_Z(A)] = 2 \psi_{\text{OPT}}(A)
-    \end{equation*}
+    \end{equation}
 \end{lemma}
 \begin{proof}
     根据期望的计算方式有，将上面的推论\ref{cor: expectation}带入得到
-    \begin{align*}
+    \begin{align}
         \E[\psi_Z(A)] &= \sum_{z \in A} \frac{w_z}{\sum_{i \in A} w_i} \psi_z(A) = \sum_{z \in A} \frac{w_z}{\sum_{i \in A} w_i} (\psi_{\text{OPT}}(A)+(\sum_{i \in A}w_i) \norm{z-\mu}^2) \\
         &= 2 \psi_{\text{OPT}}(A)
-    \end{align*}
+    \end{align}
     引理得证
 \end{proof}
 这个引理说明均匀采样一个点，点所在的类到这个点的距离平方和不会比最优的差2倍。换句话说，如果每次都能选择到不同的类，在这个类里面均匀采样的话最后的近似系数就是2，可惜我们没有办法让每次seed的点落在不同的类，所以才提出了$k$-means++算法。那么基于$d^2$ weighting采样产生的点，点所在的类到这个点的距离平方和不会比最优的差几倍呢？我们用下个引理回答这个问题。
 \begin{lemma}
     \label{lem: 8OPT_A}
     令$C$是$k$-means++ seeding的任意中间结果，$1 \leq |C| \leq k$，记$Z \in A$是在给定$C$的情况下依照$d^2$ weighting采样的点，$A$是任意一个最优类，记$C' = C \cup \{Z\}$，则可以得到
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_{C'}(A)|C,Z \in A] \leq 8 \psi_{\text{OPT}}(A)
-    \end{equation*}
+    \end{equation}
 \end{lemma}
 \begin{proof}
     根据期望计算方式有
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_{C'}(A)|C,Z \in A] = \sum_{z \in A} P[Z = z|C,Z \in A] \psi_{C\cup\{z\}}(A) = \sum_{z \in A} \frac{\psi_C(z)}{\psi_C(A)} \psi_{C\cup\{z\}}(A)
-    \end{equation*}
+    \end{equation}
     对任意数据点$z$和$i$，根据三角不等式，我们有下面第一行
-    \begin{gather*}
+    \begin{gather}
         d(z,C) \leq d(i,C) + \norm{i-z} \\
         d(z,C)^2 \leq 2d(i,C)^2 + 2\norm{i-z}^2 \\
         (\sum_{i \in A} w_i) d(z,C)^2 \leq 2\psi_C(A) + 2\psi_z(A) \\
         \psi_C(z) \leq 2\frac{w_z}{\sum_{i \in A}w_i} \psi_C(A) + 2\frac{w_z}{\sum_{i \in A}w_i} \psi_z(A)
-    \end{gather*}
+    \end{gather}
     上面第二行是根据算术平均数小于等于平方平均数得到，对第二行两边同乘$w_i$，把所有$i\in A$里的情况加到一起得到第三行，两边同乘$w_z$，再除以$\sum_{i \in A}w_i$得到最后一行。将最后一行的$\psi_C(z)$带入一开始的期望计算中，得到
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_{C'}(A)|C,Z \in A] \leq \sum_{z \in A} \frac{2\frac{w_z}{\sum_{i \in A}w_i} \psi_C(A)}{\psi_C(A)} \psi_{C\cup\{z\}}(A) + \sum_{z \in A} \frac{2\frac{w_z}{\sum_{i \in A}w_i} \psi_z(A)}{\psi_C(A)} \psi_{C\cup\{z\}}(A)
-    \end{equation*}
+    \end{equation}
     注意到$\psi_{C\cup\{z\}}(A) \leq \min[\psi_C(A),\psi_z(A)]$，对于上式第一项取$\psi_{C\cup\{z\}}(A) \leq \psi_z(A)$，对于第二项取$\psi_{C\cup\{z\}}(A) \leq \psi_C(A)$，带入上式，得
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(A)|C,Z \in A] &\leq \sum_{z \in A} 2\frac{w_z}{\sum_{i \in A}w_i} \psi_z(A) + \sum_{z \in A} 2\frac{w_z}{\sum_{i \in A}w_i} \psi_z(A) \\
         &\leq 4 \E[\psi_Z(A)] \\
         &\leq 8 \psi_{\text{OPT}}(A)
-    \end{align*}
-    上式第二、三行是将引理\ref{lem: 2OPT_A}带入得到，引理得证。
+    \end{align}
+    上式第三行是将引理\ref{lem: 2OPT_A}带入得到，引理得证。
 \end{proof}
 这个引理说明如果我们每次用$d^2$ weighting选到的点都在不同的最优类，那最后的近似系数就是8，但是我们没办法保证这一点。如果一个最优类里至少一个点被$d^2$ weighting选到了，我们称这个类“被覆盖”了。如果一个类已经被覆盖了，它有可能会再次被覆盖，这样就会浪费$d^2$ weighting的机会，从而导致近似系数大于8。这里，我们考虑一个一般的命题，给定$k$-means++ seeding的任意中间结果$C$，基于$C$我们任意选择$u$个没有被覆盖的最优类记为$\mathcal{X}_u$，其余的类记为$\mathcal{X}_c$，如果在$C$的基础上用$d^2$ weighting采样$t$个点，记$C'$是在$C$上加入这$t$个点后的结果，那么所有点到$C'$的距离平方和同$\psi_C(\mathcal{X}_c)$及$\psi_C(\mathcal{X}_u)$有什么关系吗？接下来我们给出一种可能的关系，然后用数学归纳法证明它。
 \begin{lemma}
@@ -286,54 +279,55 @@
 \end{lemma}
 \begin{proof}
     考虑数学归纳法，首先证明当$t=0,u>0$和$t=1,u=1$时，式\ref{eq: kmeans++_key_lemma}成立，然后证明如果$(t-1,u)$和$(t-1,u-1)$有式\ref{eq: kmeans++_key_lemma}成立，$(t,u)$时式\ref{eq: kmeans++_key_lemma}也能成立，这样命题得证。考虑$t=0,u>0$的情况，由于$1+H_t = \frac{u-t}{u} = 1$，$\psi_{C'}(\mathcal{X}) = \psi_C(\mathcal{X}) < \psi_C(\mathcal{X}) + 8\psi_{\text{OPT}}(\mathcal{X}_u)$式\ref{eq: kmeans++_key_lemma}成立，当$t=1,u=1$时，记选择的点为$Z$，如果$Z \in \mathcal{X}_c$，$\E[\psi_{C'}(\mathcal{X})|Z\in \mathcal{X}_c] \leq  \psi_C(\mathcal{X})$，如果$Z \in \mathcal{X}_u$，根据引理\ref{lem: 8OPT_A}，$\E[\psi_{C'}(\mathcal{X})|Z\in \mathcal{X}_u] \leq \psi_C(\mathcal{X}_c) + 8\psi_{\text{OPT}}(\mathcal{X}_u)$，那么
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})] &= P[Z \in \mathcal{X}_c] \E[\psi_{C'}(\mathcal{X})|Z\in \mathcal{X}_c] + P[Z \in \mathcal{X}_u] \E[\psi_{C'}(\mathcal{X})|Z\in \mathcal{X}_u] \\
         & \leq \frac{\psi_C(\mathcal{X}_c)}{\psi_C(\mathcal{X})} \psi_C(\mathcal{X}) + \frac{\psi_C(\mathcal{X}_u)}{\psi_C(\mathcal{X})} [\psi_C(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)] \\
         & \leq 2\psi_C(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)
-    \end{align*}
+    \end{align}
     由于此时$1+H_t = 2$，式\ref{eq: kmeans++_key_lemma}成立。
     考虑$(t,u)$时的情况，记选择的第一个点叫$Z$（一共要选$t$个点），$C'' = C\cup\{Z\}$。第一种情况，$Z \in \mathcal{X}_c$，此时，任选$u$个没有被覆盖的类，记为$\mathcal{X}_u''$，取$\mathcal{X}_u'' = \mathcal{X}_u$，则其他类$\mathcal{X}_c'' = \mathcal{X}_c$，还需要选$t-1$个点，由于式\ref{eq: kmeans++_key_lemma}对$(t-1,u)$成立，我们有
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})|C,Z \in \mathcal{X}_c] &\leq [\psi_{C''}(\mathcal{X}_c'')+8\psi_{\text{OPT}}(\mathcal{X}_u'')](1+H_{t-1}) + \frac{u-t+1}{u} \psi_{C''}(\mathcal{X}_u'') \\
         & \leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t-1}) + \frac{u-t+1}{u} \psi_{C}(\mathcal{X}_u)
-    \end{align*}
+    \end{align}
     第二种情况，$Z \in \mathcal{X}_u$，此时，假设被选中的类是$A \in \mathcal{X}_u$，并令$Z$取到的值是$a$。任选$u-1$个没有被覆盖的类，记为$\mathcal{X}_u''$，取$\mathcal{X}_u'' = \mathcal{X}_u - A$，对应的其他类$\mathcal{X}_c'' = \mathcal{X}_c + A$，还需要选$t-1$个点，由于式\ref{eq: kmeans++_key_lemma}对$(t-1,u-1)$成立，且注意到$\psi_{C''}(\mathcal{X}_c'') = \psi_{C''}(\mathcal{X}_c + A) = \psi_{C''}(\mathcal{X}_c) + \psi_{C''}(A) \leq \psi_{C}(\mathcal{X}_c) + \psi_{a}(A)$和$\psi_{C''}(\mathcal{X}_u'') \leq \psi_{C}(\mathcal{X}_u - A)$我们有
-    \begin{align*}
-        \E[& \psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u, Z \in A, Z=a] \leq [\psi_{C''}(\mathcal{X}_c'')+8\psi_{\text{OPT}}(\mathcal{X}_u'')](1+H_{t-1}) + \frac{u-t}{u-1} \psi_{C''}(\mathcal{X}_u'') \\
+    \begin{align}
+        \E[& \psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u, Z \in A, Z=a] \\
+        &\leq [\psi_{C''}(\mathcal{X}_c'')+8\psi_{\text{OPT}}(\mathcal{X}_u'')](1+H_{t-1}) + \frac{u-t}{u-1} \psi_{C''}(\mathcal{X}_u'') \\
         &\leq [\psi_{C}(\mathcal{X}_c)+\psi_a(A)+8\psi_{\text{OPT}}(\mathcal{X}_u)-8\psi_{\text{OPT}}(A)](1+H_{t-1}) + \frac{u-t}{u-1}[\psi_C(\mathcal{X}_u)-\psi_C(A)]
-    \end{align*}
+    \end{align}
     根据期望计算方式(全期望公式)，有
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})|C, Z \in & \mathcal{X}_u, Z \in A] =
             \sum_{a \in A} P[Z = a|C,Z \in A] \E[\psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u, Z \in A, Z=a] \\
             &\leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t-1}) + \frac{u-t}{u-1}[\psi_C(\mathcal{X}_u)-\psi_C(A)]
-    \end{align*}
+    \end{align}
     上式用到了引理\ref{lem: 8OPT_A}，接着考虑$\E[\psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u]$
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})|C, Z \in & \mathcal{X}_u] =
             \sum_{A \in \mathcal{X}_u} P[Z \in A|C, Z \in \mathcal{X}_u] \E[\psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u, Z \in A] \\
             &= \sum_{A \in \mathcal{X}_u} \frac{\psi_C(A)}{\psi_C(\mathcal{X}_u)} \E[\psi_{C'}(\mathcal{X})|C, Z \in \mathcal{X}_u, Z \in A] \\
             &\leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t-1}) + \frac{u-t}{u} \psi_C(\mathcal{X}_u)
-    \end{align*}
-    上式最后一行用到了算术平均数小于等于平方平均数的结论\footnote{对任意实数$a_1,a_2,...,a_m$，有$\sum a_i^2 \geq \frac{1}{m}(\sum a_i)^2$}，最后计算$\E[\psi_{C'}(\mathcal{X})|C]$
-    \begin{align*}
+    \end{align}
+    上式最后一行用到了算术平均数小于等于平方平均数的结论\footnote{对任意实数$a_1,a_2,...,a_m$，有$\sum a_i^2 \geq \frac{1}{m}(\sum a_i)^2$}，则
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})|C] &= P[Z \in \mathcal{X}_c|C] \E[\psi_{C'}(\mathcal{X})|C,Z \in \mathcal{X}_c] + P[Z \in \mathcal{X}_u|C] \E[\psi_{C'}(\mathcal{X})|C,Z \in \mathcal{X}_u] \\
             &\leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t-1}) + \frac{u-t}{u}\psi_C(\mathcal{X}_u) + \frac{1}{u} \frac{\psi_C(\mathcal{X}_c)}{\psi_C(\mathcal{X})} \psi_C(\mathcal{X}_u) \\
             &\leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t-1}+\frac{1}{u}) + \frac{u-t}{u}\psi_C(\mathcal{X}_u) \\
             &\leq [\psi_{C}(\mathcal{X}_c)+8\psi_{\text{OPT}}(\mathcal{X}_u)](1+H_{t}) + \frac{u-t}{u}\psi_C(\mathcal{X}_u)
-    \end{align*}
+    \end{align}
     最后一行成立是因为$\frac{1}{u} \leq \frac{1}{t}$，根据归纳性，引理得证。
 \end{proof}
 现在，我们可以证明定理\ref{theo: weighted kmeans++}了，证明如下
 \begin{proof}
     考虑引理\ref{lem: kmeans++_key_lemma}，取第一个带权均匀采样点的集合作为$C$，记这个采样点是$Z$，令$A$是任意最优类，$a\in A$是$Z$可能取的值。取$t=u=k-1$，则$\mathcal{X}_u = X - A$，$\mathcal{X}_c = A$。根据引理\ref{lem: kmeans++_key_lemma}，我们有
-    \begin{equation*}
+    \begin{equation}
         \E[\psi_{C'}(\mathcal{X})|Z=a] \leq [\psi_a(A)+8\psi_{\text{OPT}}(\mathcal{X})-8\psi_{\text{OPT}}(A)](1+H_{k-1})
-    \end{equation*}
+    \end{equation}
     根据引理\ref{lem: 2OPT_A}和$H_{k-1} \leq 1 + \ln k$，可得
-    \begin{align*}
+    \begin{align}
         \E[\psi_{C'}(\mathcal{X})] &= \sum_{a \in A} P[Z=a] \E[\psi_{C'}(\mathcal{X})|Z=a] \\
         &\leq 8(\ln k +2)\psi_{\text{OPT}}(\mathcal{X})
-    \end{align*}
+    \end{align}
     定理得证。
 \end{proof}

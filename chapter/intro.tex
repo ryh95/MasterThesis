@@ -12,9 +12,9 @@
 内的实体是相似的,不同类簇的实体是不相似的;一个类簇是测试空间中点的会聚,同一类簇的任意两个点间的
 距离小于不同类簇的任意两个点间的距离;类簇可以描述为一个包含密度相对较高的点集的多维空间中的连
 通区域,它们借助包含密度相对较低的点集的区域与其他区域(类簇)相分离。形式化地讲，给定数据集$D=\{x_1,x_2,...,x_n\}$，以及一个能将任意一个点$x$映射到一个类id的划分函数$f$，通过$f$，数据可以被划分为若干组${G_1,G_2,...,G_k}$（假定划分的组数是给定的$k$），其中$G_i \subseteq D$。给定一个评价函数$E$，我们就能知道聚类的质量，聚类的目标便是找到那个最优划分$f^*$，即
-\begin{equation*}
+\begin{equation}
     f^* = \argmax_f E(G_1,G_2,...,G_k)
-\end{equation*}
+\end{equation}
 一个一般的聚类过程包括数据预处理、特征处理、聚类和结果评估这4个步骤。
 
 聚类过程：
@@ -133,41 +133,39 @@ Maximum distance & $\norm{a-b}_\infty = \max_i |a_i - b_i|$ \\
 
 \subsection{聚类评价}
 聚类评价方式分为两种，外部评价（external index）和内部评价（internal index）。前者需要有人给出的划分结果作为标准而后者不利用任何参考。我们先看外部评价，假定算法给出的类划分是$C=\{C_1, C_2,...,C_k\}$，人给出的划分是$C^* = \{C_1^*,C_2^*,...,C_s^*\}$。考虑一对数据对$(x_i,x_j)$，假设$x_i,x_j$在$C$中在同一个类里，如果算法给出的划分和人的划分是一致的，那么它们在$C^*$中也应该在同一个类里。令$\lambda_i = \{1,2,...,k\}$是数据点$x_i$的类id，即$x_i \in C_{\lambda_i}$。那么对于刚刚所说的情况可以定义一个集合$SS$来容纳这些数据对
-\begin{equation*}
+\begin{equation}
     SS = \{(x_i,x_j)|\lambda_i = \lambda_j,\lambda_i^* = \lambda_j^*, i<j \}
-\end{equation*}
+\end{equation}
 也就是说，如果数据对在$SS$集合中就意味着聚类是成功的。当然也有不成功的情况，我们定义为$SD$和$DS$。
-\begin{gather*}
+\begin{gather}
     SD = \{(x_i,x_j)|\lambda_i = \lambda_j,\lambda_i^* \neq \lambda_j^*, i<j \} \\
     DS = \{(x_i,x_j)|\lambda_i \neq \lambda_j,\lambda_i^* = \lambda_j^*, i<j \} \\
     DD = \{(x_i,x_j)|\lambda_i \neq \lambda_j,\lambda_i^* \neq \lambda_j^*, i<j \}
-\end{gather*}
+\end{gather}
 最后一行是另外一种成功的情况称为$DD$。值得注意的是，这几种情况是互不相交的，定义
-\begin{equation*}
+\begin{equation}
     TP = |SS|, FP = |SD|, FN = |DS|, TN = |DD|
-\end{equation*}
+\end{equation}
 因此有$TP+FP+FN+TN=n(n-1)/2$。基于$TP$、$FP$、$FN$和$TN$，我们可以定义以下外部评价指标（$F_1$，Rand系数，Jaccard系数）
-\begin{gather*}
+\begin{gather}
     P = \frac{TP}{TP+FP},R = \frac{TP}{TP+FN}, F_1 = \frac{2*P*R}{P+R} \\
     \text{Rand} = \frac{TP+TN}{TP+FP+FN+TN} \\ 
     \text{Jaccard} = \frac{TP}{TP+FP+FN}
-\end{gather*}
+\end{gather}
 $F_1$和监督学习中的一致，Rand系数也被称为Accuracy。除去上面这些还有简单实用的Purity以及有信息论背景的NMI（Normalized Mutual Information），当类的数目比较大的时候，Purity容易比较大，而NMI缓解了此问题。
-\begin{gather*}
+\begin{gather}
     \text{Purity} = \frac{1}{n} \sum_i \max_j n_{ij} \\
     \text{MI}(C, C^*) = \sum_{i=1}^{|C|}\sum_{j=1}^{|C^*|}P(i, j)\log\left(\frac{P(i,j)}{P(i)P(j)}\right) \\
     H(C) = - \sum_{i=1}^{|C|}P(i)\log(P(i)) \\
     \text{NMI}(C, C^*) = \frac{\text{MI}(C, C^*)}{\text{mean}(H(C), H(C^*))}
-\end{gather*}
+\end{gather}
 
-其中，$n_{ij}=|C_i \cap C_j^*|$，$n_i = |C_i|$，$P(i) = n_i/n$，$P(i,j)=n_{ij}/n$。$P(i)$可以理解为一个数据点落在类$i$中的概率，$P(i,j)$可以理解为一个点在既在$C_i$又在$C_j^*$中的概率。MI称为互信息（mutual information），H是熵。这里所列的外部评价都是越大越好。
-
-除了外部评价，内部评价在没有人工标注的情况下使用，比如$k$-means的目标值（objective）可以作为评价指标，该评价指标是聚类问题相关的，评价$k$-means算法用，评价其他算法慎用，还有一些聚类问题无关的评价指标，比如DB指数（Davies-Bouldin Index）
-\begin{gather*}
+其中，$n_{ij}=|C_i \cap C_j^*|$，$n_i = |C_i|$，$P(i) = n_i/n$，$P(i,j)=n_{ij}/n$。$P(i)$可以理解为一个数据点落在类$i$中的概率，$P(i,j)$可以理解为一个点在既在$C_i$又在$C_j^*$中的概率。MI称为互信息（mutual information），H是熵。这里所列的外部评价都是越大越好。除了外部评价，内部评价在没有人工标注的情况下使用，比如$k$-means的目标值（objective）可以作为评价指标，该评价指标是聚类问题相关的，评价$k$-means算法用，评价其他算法慎用，还有一些聚类问题无关的评价指标，比如DB指数（Davies-Bouldin Index）
+\begin{gather}
     \text{avg} = \frac{2}{|C|(|C|-1)}\sum_{1\leq i<j \leq |C| }d(x_i,x_j) \\
     d_{cen}(C_i,C_j) = d(\mu_i,\mu_j) \\
     \text{DBI} = \frac{1}{k}\sum_{i=1}^k \max_{j \neq i} (\frac{\text{avg}(C_i)+\text{avg}(C_j)}{d_{cen}(\mu_i,\mu_j)})
-\end{gather*}
+\end{gather}
 其中$d$可以是表\ref{tab: distance}中的距离函数。
 
 \section{本文的研究目标及主要贡献和创新}

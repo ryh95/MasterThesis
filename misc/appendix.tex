@@ -6,21 +6,21 @@
 
 \begin{theorem}[Markov 不等式]
 	令$X$是一个非负的随机变量，则，对任意常数$a>0$，有
-	\begin{equation*}
+	\begin{equation}
 		P(X \geq a) \leq \frac{\E[X]}{a}
-	\end{equation*}
+	\end{equation}
 \end{theorem}
 
 \begin{theorem}[Chebyshev 不等式]
 	令$X$是一个随机变量，则，对任意常数$a>0$，如果方差是有限的，有
-	\begin{equation*}
+	\begin{equation}
 		P(|X-\E[X]| \geq a) \leq \frac{\text{Var}[X]}{a^{2}}
-	\end{equation*}
+	\end{equation}
 \end{theorem}
 
 \begin{theorem}[Hoeffding 不等式]
 	令$X_1,X_2,...,X_n$是独立的随机变量，其中$a_i \leq X_i \leq b_i$，令$c_i = b_i - a_i$，$S_n = \sum_{i=1}^n X_i$，$E_n = \E[S_n] = \sum_{i=1}^n \E[X_i]$，则有
-	\begin{equation*}
+	\begin{equation}
 		P\left[\left|S_{n}-E_{n}\right|>t\right]<2 \exp \left(-\frac{2 t^{2}}{\sum_{i=1}^{n} c_{i}^{2}}\right)
-	\end{equation*}
+	\end{equation}
 \end{theorem}

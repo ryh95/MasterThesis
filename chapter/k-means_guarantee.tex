@@ -32,9 +32,9 @@
 该算法的时间复杂度为$O(nkd)$，实验验证在使用 $k$-means++ seeding 后 Lloyd 算法能更快收敛。另外， 对于 $k$-means++以下定理成立
 \begin{theorem}[$k$-means++解的质量]
     对于任意数据集$\mathcal{X}$
-    \begin{equation*}
+    \begin{equation}
     \E[\varphi(\mathcal{X},C)] \leq 8(\ln k + 2) \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
+    \end{equation}
     其中$C$算法\ref{alg:Kmeans++ seeding}返回的结果
 \end{theorem}
 可以看出即使以初始化的$k$个点作为最后的解，解的平均
@@ -60,16 +60,16 @@
 \cite{arya2004local}和文献\cite{charikar1999improved}的结果进行拓展，该算法可以在多项式时间（polynomial time）内收敛。 首先，对于任意1次替换不能再减少$k$-means 目标函数值的解称其为1-stable 的解。基于此， Arya等人\citing{arya2004local}和Kanungo等人\citing{kanungo2004local}对解的质量给出了如下的理论结果。
 \begin{theorem}[1-stable的解的质量]
     令 $O \subset \mathcal{X}$，且是所有大小为$k$的$\mathcal{X}$的子集里能取得最小$k$-means 目标函数值的那个解，令$T$是 1-stable 的解，则有
-    \begin{equation*}
+    \begin{equation}
         \varphi(\mathcal{X},T) \leq 25 \varphi(\mathcal{X},O)
-    \end{equation*}
+    \end{equation}
 \end{theorem}
 值得注意的是$O$并不是$C_{\text{OPT}_k}^{\mathcal{X}}$，通过简单的推论，得知近似系数是50（乘以2）。那对于任意p-stable 的解，近似系数是多少呢？Kanungo 等人\citing{kanungo2004local}对算法\ref{alg:p-swap}的分析做了推广得到以下结论。
 \begin{theorem}[p-stable的解的质量]
     令 $O \subset \mathcal{X}$，且是所有大小为$k$的$\mathcal{X}$的子集里能取得最小$k$-means 目标函数值的那个解，令$T$是 p-stable 的解，则有
-    \begin{equation*}
+    \begin{equation}
         \varphi(\mathcal{X},T) \leq (3+\frac{2}{p})^2 \varphi(\mathcal{X},O)
-    \end{equation*}
+    \end{equation}
 \end{theorem}
 可见对于充分大的 p，系数是 18。实验表明算法\ref{alg:p-swap}收敛相对于 Lloyd 算法收敛慢，但是该算法能够避免陷入局部极小值。
 所以，实际使用时会和 Lloyd 算法混合使用，即先用一次替换再进行 Lloyd 算法的 2、 3 步，这样的混合算法在实际中有很好
@@ -101,15 +101,23 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
 \begin{theorem}[$k$-means++和本地搜索的混合算法的解的质量]
     \label{thrm: k++_p-swap}
      令$C$是算法\ref{alg: k++_p-swap}的解，且$z \geq 100000 k \log\log k$，则有
-     \begin{equation*}
+     \begin{equation}
          \E[\varphi(\mathcal{X},C)] \in O(\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}))
-     \end{equation*}
+     \end{equation}
 \end{theorem}
 算法\ref{alg: k++_p-swap}的理论保证由定理\ref{thrm: k++_p-swap}给出，该定理说明只要迭代大
 概$O(k)$次LocalSearch++，解的近似系数就能达到常数，此时算法\ref{alg: k++_p-swap}的时间复杂度是$O(ndk^2 \log\log k)$。实验表明在不使用Lloyd 算法后续迭代的情况下，混合的算法\ref{alg: k++_p-swap}比$k$-means++好8-
 35\%，而使用 Lloyd 迭代 10 次后，依然能比$k$-means++好1-18\%
 
-尽管$k$-means++在线性时间里能得到不错的解，但是其序列化属性使得该算法无法并行，因此在大数据下难以适用， $k$-means\(\vert \vert\)采样便是为了解决这个问题而被提出的，它的想法是基于已经挑选出的点集，下一次不止挑选一个点而是挑选一个集合，其期望大小为$l$，将若干次挑选出来的集合汇总之后再在其上做聚类即可，采样算法详细描述见算法\ref{alg: kmeans||_sample}，对于算法\ref{alg: kmeans||_sample}有如下理论保证
+尽管$k$-means++在线性时间里能得到不错的解，但是其序列化属性使得该算法无法并行，因此在大数据下难以适用， $k$-means\(\vert \vert\)采样便是为了解决这个问题而被提出的，它的想法是基于已经挑选出的点集，下一次不止挑选一个点而是挑选一个集合，其期望大小为$l$，将若干次挑选出来的集合汇总之后再在其上做聚类即可，采样算法详细描述见算法\ref{alg: kmeans||_sample}，对于算法\ref{alg: kmeans||_sample}有如下理论保证。
+\begin{theorem}[$k$-means\(\vert \vert\)采样理论保证1]
+    \label{theo: kmeans||_performance_1}
+    令$S$是算法\ref{alg: kmeans||_sample} $t$次迭代后返回的结果，有
+    \begin{equation}
+    \E[\varphi(\mathcal{X},S)] \leq (\frac{1+\alpha}{2})^t \xi + \frac{16}{1-\alpha}\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
+    \end{equation}
+    其中$\alpha=exp(-(1-e^{-l/(2k)})) \approx e^{-\frac{l}{2k}}$
+\end{theorem}
 \begin{algorithm}
     \caption{$k$-means\(\vert \vert\)采样算法}\label{alg: kmeans||_sample}
     \KwIn{数据集$\mathcal{X}$，每一轮期望采样数$l$}
@@ -125,22 +133,14 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
     }
     \textbf{返回} $S$
 \end{algorithm}
-\begin{theorem}[$k$-means\(\vert \vert\)采样理论保证1]
-    \label{theo: kmeans||_performance_1}
-    令$S$是算法\ref{alg: kmeans||_sample} $t$次迭代后返回的结果，则有
-    \begin{equation*}
-    \E[\varphi(\mathcal{X},S)] \leq (\frac{1+\alpha}{2})^t \xi + \frac{16}{1-\alpha}\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
-    其中$\alpha=exp(-(1-e^{-l/(2k)})) \approx e^{-\frac{l}{2k}}$
-\end{theorem}
 上述定理说明算法\ref{alg: kmeans||_sample}经过$O(\log \xi)$次迭代之后，只要$l$足够大，所有点到挑选出来的$S$个点的距离和已经降到了$O(\varphi(\mathcal{X},C_{\text{OPT}_k}^\mathcal{X}))$，也就是说和最优的距离和已经在一个级别了。 接着在$S$上聚类便可
 以得到$k$-means的解， 在这里为了使解有理论上的保证， 需要对$S$上的点加权重，首先定义如下带权$k$-means问题。
 \begin{definition}[带权$k$-means问题]
     \label{def: weighted_kmeans}
     给定集合 $\mathcal{X} \subseteq \R^d$ 和每一个$x \in \mathcal{X}$ 的权重 $w_i$, 找到一个大小为$k$的集合 $C \subseteq \R^d$ 使得下述目标函数能最小
-    \begin{equation*}
+    \begin{equation}
         \psi(\mathcal{X},C) = \sum_{x_i \in \mathcal{X}}w_i d^2 (x_i,C)
-    \end{equation*}
+    \end{equation}
 \end{definition}
 接着在带权重的$S$上聚类得到算法\ref{alg: kmeans||_seeding}，
 \begin{algorithm}
@@ -157,9 +157,9 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
 了这一点，令迭代次数为$t$， 则有下述定理。
 \begin{theorem}[$k$-means\(\vert \vert\)采样理论保证2]
     令$k \in \N$，$t \in \N$，且$l \geq k$，令$\mathcal{X} \subseteq \R^d$且$S$是算法\ref{alg: kmeans||_sample}返回的结果，则
-    \begin{equation*}
+    \begin{equation}
     \E[\varphi(\mathcal{X},S)] \leq 2(\frac{k}{el})^t \text{Var}(\mathcal{X}) + 26\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
+    \end{equation}
 \end{theorem}
 该定理同定理\ref{theo: kmeans||_performance_1}关键区别是只要$l$足够大，指数衰减的速度可以任意快，而定理\ref{theo: kmeans||_performance_1}的衰减速度最多是1/2。虽然$k$-means\(\vert \vert\)时间复杂度是$O(nld \log n)$（如果$t$次迭代则是$O(nltd)$），比Lloyd算法高，但是它易于并行，因此在能够并行的情况下很多经典大数据处理框架都采用了该算法比如Spark\citing{zaharia2010spark,zaharia2016apache}。
 
@@ -167,10 +167,34 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
 的方法称为K-M$\text{C}^2$\citing{bachem2016approximate}， Bachem等人通过对数据集生成的分
 布做出假设使得基于马尔科夫链随机游走的时间复杂度被限制在次线性时间（sub-linear time）内，从而让K-M$\text{C}^2$在$O(k^3 d \log^2 n \log k)$的时间复
 杂度下获得了$k$-means++的近似系数。K-M$\text{C}^2$算法见算法\ref{alg:K-MC^2 seeding}，算法中$Unif(0,1)$指的是0-1中均匀采样的一个数。为了让游走能尽快收敛到平稳分布，我们定义如下两个数据相关的指标：
-\begin{equation*}
+\begin{equation}
 \zeta(\mathcal{X}) = \max\limits_{x \in \mathcal{X}}\frac{d(x,\mu(\mathcal{X}))^2}{\sum_{x' \in \mathcal{X}}d(x',\mu(\mathcal{X}))^2}, \eta(\mathcal{X}) = \frac{\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})}{\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})}
-\end{equation*}
-\begin{algorithm}
+\end{equation}
+假定数据是从生成数据的分布$F$中独立同分布的采样出来的，且该分布满足以下两个假设，如果满足这些假设的话$\zeta(\mathcal{X})$和
+$\eta(\mathcal{X})$就可以被限定住，游走就能很快收敛到平稳分布
+
+\textbf{假设1} 分布$F$的尾部是指数衰减的，即$\exists c,t $使得$P[d(x,\mu(F))>a]\leq ce^{-at}$，其中$x\sim F$ 
+
+\textbf{假设2} $F$在一个球面上的最大和最小概率密度被一个常数限制
+
+如果满足假设1和2分别有以下推论和定理。
+\begin{corollary}
+    \label{cor: zeta_x}
+    如果假设1成立，有$\zeta(\mathcal{X}) = O(\log^2 n)$
+\end{corollary}
+\begin{corollary}
+    \label{cor: eta_x}
+    如果假设2成立，有$\eta(\mathcal{X}) = O(k)$
+\end{corollary}
+\begin{theorem}
+    \label{theo:Kmc^2 performance}
+    在假设1和2成立的情况下，令$C$为算法\ref{alg:K-MC^2 seeding}的返回结果，有
+    \begin{equation}
+    \E[\varphi(\mathcal{X},C)]\leq O(logk)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}))
+    \end{equation}
+    此时，$m = O(k\log^2 n\log k)$，算法时间复杂度为$O(k^3 d \log^2 n \log k)$
+\end{theorem}
+\begin{algorithm}[ht]
     \caption{K-M$\text{C}^2$ seeding}\label{alg:K-MC^2 seeding}
     \KwIn{数据集$\mathcal{X}$，游走次数$m$，类数目$k$}
     \KwOut{$k$个点$C$}
@@ -190,37 +214,6 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
     }
     \textbf{返回} $C$ % can add comment like this \Comment{The gcd is b}
 \end{algorithm}
-假定数据是从生成数据的分布$F$中独立同分布的采样出来的，且该分布满足以下两个假设，如果满足这些假设的话$\zeta(\mathcal{X})$和
-$\eta(\mathcal{X})$就可以被限定住，游走就能很快收敛到平稳分布
-
-\textbf{假设1} 分布$F$的尾部是指数衰减的，即$\exists c,t $使得$P[d(x,\mu(F))>a]\leq ce^{-at}$，其中$x\sim F$ 
-
-\textbf{假设2} $F$在一个球面上的最大和最小概率密度被一个常数限制
-
-如果满足假设1和2分别有以下推论
-\begin{corollary}
-    \label{cor: zeta_x}
-    如果假设1成立，则有
-    \begin{equation*}
-        \zeta(\mathcal{X}) = O(\log^2 n)
-    \end{equation*}
-\end{corollary}
-\begin{corollary}
-    \label{cor: eta_x}
-    如果假设2成立，则有
-    \begin{equation*}
-        \eta(\mathcal{X}) = O(k)
-    \end{equation*}
-\end{corollary}
-于是我们得出定理\ref{theo:Kmc^2 performance}。
-\begin{theorem}
-    \label{theo:Kmc^2 performance}
-    在假设1和2成立的情况下
-    \begin{equation*}
-    \E[\varphi(\mathcal{X},C)]\leq O(logk)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}))
-    \end{equation*}
-    $C$为算法\ref{alg:K-MC^2 seeding}的返回结果，此时，$m = O(k\log^2 n\log k)$，算法时间复杂度为$O(k^3 d \log^2 n \log k)$
-\end{theorem}
 该方法在次线性时间里完成了$O(\log k)$的近似，因此在数据较大且不能很好并行的情况下应该优先使用该算法。然而，在实践中该方法有以下缺点：
 \begin{enumerate}
     \item 如果存在小的类且该类离其他类比较远，那由于均匀选择的点很难落在小的类里，这样该方法就会产生较大的距离和
@@ -231,7 +224,14 @@ $\eta(\mathcal{X})$就可以被限定住，游走就能很快收敛到平稳分�
 \end{enumerate}
 因此，需要提出新的算法解决这些问题。
 
-AFK-M$\text{C}^2$\citing{bachem2016fast}通过使用提议分布（proposal distribution）很好的解决了这些问题，首先通过该提议分布，$\zeta(\mathcal{X})$的假设得以废弃；第二，一种新的理论分析使得在不假设$\eta(\mathcal{X})$的情况下也能获得解的质量的理论保证；最后， 新的结果表明了游走次数$m$和算法质量之间的权衡。 AFK-M$\text{C}^2$描述在算法\ref{alg:AFK-MC^2 seeding}中。
+AFK-M$\text{C}^2$\citing{bachem2016fast}通过使用提议分布（proposal distribution）很好的解决了这些问题，首先通过该提议分布，$\zeta(\mathcal{X})$的假设得以废弃；第二，一种新的理论分析使得在不假设$\eta(\mathcal{X})$的情况下也能获得解的质量的理论保证；最后， 新的结果表明了游走次数$m$和算法质量之间的权衡。 AFK-M$\text{C}^2$描述在算法\ref{alg:AFK-MC^2 seeding}中。可以看出点的选择依赖提议分布$q$， 因此小的类也能被选到点，从而解决了K-M$\text{C}^2$方法中的问题1。对于AFK-M$\text{C}^2$，有如下定理
+\begin{theorem}[AFK-M$\text{C}^2$理论结果]
+    \label{theo:AFKmc^2 performance}
+    令$\epsilon \in (0,1)$ 且$k \in \N$。令数据集$\mathcal{X} \subseteq \R^d$，$|\mathcal{X}| = n$，$C$是算法\ref{alg:AFK-MC^2 seeding}的输出，$m = 1+\frac{8}{\epsilon}log \frac{4k}{\epsilon}$，则
+    \begin{equation}
+    \E[\varphi(\mathcal{X},C)]\leq 8(\log_{2}k+2)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}) + \epsilon\text{Var}(\mathcal{X})
+    \end{equation}
+\end{theorem}
 \begin{algorithm}
     \SetNoFillComment
     \caption{AFK-M$\text{C}^2$ seeding}\label{alg:AFK-MC^2 seeding}
@@ -258,14 +258,6 @@ AFK-M$\text{C}^2$\citing{bachem2016fast}通过使用提议分布（proposal dist
     }
     \textbf{返回} $C$
 \end{algorithm}
-可以看出点的选择依赖提议分布$q$， 因此小的类也能被选到点，从而解决了K-M$\text{C}^2$方法中的问题1。对于AFK-M$\text{C}^2$，有如下定理
-\begin{theorem}[AFK-M$\text{C}^2$理论结果]
-    \label{theo:AFKmc^2 performance}
-    令$\epsilon \in (0,1)$ 且$k \in \N$。令数据集$\mathcal{X} \subseteq \R^d$，$|\mathcal{X}| = n$，$C$是算法\ref{alg:AFK-MC^2 seeding}的输出，$m = 1+\frac{8}{\epsilon}log \frac{4k}{\epsilon}$，则
-    \begin{equation*}
-    \E[\varphi(\mathcal{X},C)]\leq 8(\log_{2}k+2)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}) + \epsilon\text{Var}(\mathcal{X})
-    \end{equation*}
-\end{theorem}
 其中$\text{Var}(\mathcal{X})=\sum_{x \in  \mathcal{X}}d(x,\mu(\mathcal{X}))^2$，容易分析得，算法中预处理花费时间为$O(nd)$，主要循环花费时间为$O(\frac{1}{\epsilon}k^2 d\log \frac{k}{\epsilon})$。虽然预处理需要花费线性的时间，时间复杂度比K-M$\text{C}^2$高，但是我们有以下理由认为实践中该步骤问题不会很大
 \begin{enumerate}
     \item 对所有数据只需遍历一次
@@ -275,9 +267,9 @@ AFK-M$\text{C}^2$\citing{bachem2016fast}通过使用提议分布（proposal dist
 因此该算法和K-M$\text{C}^2$一样，在实际中有良好的适用性，另外，定理\ref{theo:AFKmc^2 performance}良好的揭示游走次数同聚类质量间的联系，可以看到随着$\epsilon$的减小，游走步数$m$逐渐增大，聚类质量逐渐向$k$-means++的质量靠拢。同时，如果对数据的假设$\eta(\mathcal{X})$满足的话，我们可以得到下述推论。
 \begin{corollary}
     令$k \in \N$，数据集$\mathcal{X} \subseteq \R^d$，$|\mathcal{X}| = n$，且满足$\beta(\mathcal{X}) = O(k)$，$C$是算法\ref{alg:AFK-MC^2 seeding}的输出，$m = O(k\log k)$，则
-    \begin{equation*}
+    \begin{equation}
     \E[\varphi(\mathcal{X},C)]\leq 8(\log_{2}k+3)\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
+    \end{equation}
 \end{corollary}
 此时，算法中预处理花费时间为$O(nd)$，主要循环花费时间为$O(k^3 d \log k)$。实验结果表明，对于大数据集，在0到1\%的相对误差下，AFK-M$\text{C}^2$算法要比$k$-means++快200到1000倍。
 

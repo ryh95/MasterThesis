@@ -17,17 +17,17 @@
 \begin{definition}[常规Coreset]
     \label{def: coreset}
     带权重集合$S$是数据集$\mathcal{X}$一个$\epsilon$-Coreset，如果对任意集合$C \subset \R^d$，$|C|=k$满足
-    \begin{equation*}
+    \begin{equation}
         |\varphi(\mathcal{X},C) - \psi (S,C)| \leq \epsilon \varphi(\mathcal{X},C)
-    \end{equation*}
+    \end{equation}
 \end{definition}
 这是一个非常强的定义，因为它要求对所有$C$都要符合定义的约束，所以符合定义\ref{def: coreset}的Coreset也被称为Strong Coreset。对于Strong Coreset，它的一个良好的性质是采样点上的最优距离平方和就可以近似所有点上的最优距离平方和。
 \begin{corollary}[Coreset性质1]
     \label{cor: coreset_property1}
     令$\epsilon \in (0, \frac{1}{3})$，$S$是数据集$\mathcal{X}$的一个$\epsilon$-Coreset，则有
-    \begin{equation*}
+    \begin{equation}
         \varphi(\mathcal{X},C_{\text{OPT}_k}^S) \leq (1+3\epsilon) \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})
-    \end{equation*}
+    \end{equation}
 \end{corollary}
 目前效果很好的$\epsilon$-Coreset基于重要性采样(importance sampling)，算法见文献\cite{bachem2018sampling}中算法9，其采样数目为$O(\frac{k\log k}{\epsilon^2}(dk\log k+\log\frac{1}{\delta}))$，时间复杂度为$O(ndk\log\frac{1}{\delta})$，对于采样点来说近似系数是$1+O(\epsilon)$。该方法的近似系数非常好而花费的时间又是线性的，可以说是目前$k$-means问题中相当好的算法。
 
@@ -35,17 +35,17 @@
 \begin{definition}[Lightweight Coreset]
     \label{def: lightweight_coreset}
     令$\epsilon > 0$，$k \in \N$，$\mathcal{X} \subset \R^d$，它中心点是$\mu(\mathcal{X})$，如果对任意$Q \in \{Q'| Q' \subset \R^d, |Q'| \leq k\}$有
-    \begin{equation*}
+    \begin{equation}
         |\varphi(\mathcal{X},Q) - \psi(S,Q)| \leq \frac{\epsilon}{2}\varphi(\mathcal{X},Q) + \frac{\epsilon}{2}\varphi(\mathcal{X},\mu(\mathcal{X}))
-    \end{equation*}
+    \end{equation}
     则称$S$是一个$(\epsilon,k)$-Lightweight Coreset
 \end{definition}
 效仿推论\ref{cor: coreset_property1}，易得其有以下近似系数的推论。
 \begin{corollary}[Lightweight Coreset性质]
     如果$S$是一个$(\epsilon,k)$-Lightweight Coreset，有
-    \begin{equation*}
+    \begin{equation}
         \varphi(\mathcal{X},C_{\text{OPT}_k}^S) \leq \varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}}) + 4\epsilon\varphi(\mathcal{X},\mu(\mathcal{X}))
-    \end{equation*}
+    \end{equation}
 \end{corollary}
 构造该Coreset的算法见算法\ref{alg: Lightweight coreset}，该算法有如下理论保证
 \begin{algorithm}
@@ -62,9 +62,9 @@
 \begin{theorem}[Lightweight Coreset理论保证]
     \label{theo: lightweight_coreset}
     令$\epsilon>0$，$\delta>0$，且$k\in \N$。令$\mathcal{X}$是$\R^d$中的数据点，令$S$是算法\ref{alg: Lightweight coreset}的输出。其中采样数
-    \begin{equation*}
+    \begin{equation}
         m \geq c\frac{dk\log k + \log(1/\delta)}{\epsilon^2}
-    \end{equation*}
+    \end{equation}
     其中$c$是一个常数。这样就可以至少1-$\delta$的概率使得集合$S$是一个$(\epsilon,k)$-Lightweight Coreset。
 \end{theorem}
 该定理说明只要采样常数个点（与$n$无关），算法就可以在$O(nd)$的时间复杂度里取得好的聚类结果（如果$\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})/\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})$不大的话）。特别的，如果前述假设2满足的话，对于采样点来说近似系数就变为了$1+O(k\epsilon)$。%remark: 对于采样点来说近似系数就变为了$1+O(k\epsilon)$ 说法不严谨，\phi(X,C_{opt_k}^S)是$1+O(k\epsilon)$　不是\phi(X,S)

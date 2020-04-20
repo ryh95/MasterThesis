@@ -95,14 +95,14 @@
 
 \subsection{图像分割}
 聚类的一个应用就是图像分割，这个应用要求对图像的不同的区块进行准确的、光滑的划分，这一应用给聚类算法聚类的质量提供了一个直观的展示。由于图像不同区块的边界不是线性的，所以需要修改$k$-means的目标函数（$k$-means划分的边界是线性的），这里我们将三个算法扩展到他们对应的kernel版本。kernel $K$由以下方法构建，首先，用文献\cite{stella2003multiclass}的方法构建相似度矩阵$A$，接着，寻找一个离$A$最近的半正定矩阵$K$作为kernel，这里近与远用矩阵的Frobenius范数来度量，即求解
-\begin{equation*}
+\begin{equation}
 	\begin{aligned}
 		& \underset{K}{\text{min}} 
 		& & \lVert K - A \rVert_F \\
 		& s.t. 
 		& & K \succeq 0
 	\end{aligned}
-\end{equation*}
+\end{equation}
 $K \succeq 0$表示$K$是半正定矩阵。由于三个算法只返回$k$个点，$k$个划分是通过把所有点靠到离它最近的返回点上计算得到的。测试的图片是“kitten”、“bear”和“baby”\footnote{下载地址 \url{http://www.cs.utexas.edu/users/dml/Software/graclus.html}}，这些图片由文献\cite{dhillon2004kernel}提供。我们调整了这些图片的长和宽，使得聚类的点的数目从900（30*30）到14400（120*120）。这个任务中kernel $k$-means的目标函数值作为聚类质量的评价指标，效率的评价指标和传统聚类中的一样。
 
 % remark: weighted kernel kmeans++ for Double KMC^2？num of iterations?
