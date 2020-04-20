@@ -8,11 +8,12 @@ clustering has been studied over the past few decades. The unsupervised nature o
 Unfortunately, both clustering problems are NP-hard. Hence, we could only use approximate algorithms on the big data. How to improve the clustering quality and speedup the clustering procedure on the big data are two key problems.This thesis will investigate these two problems on the $k$-means and the spectral clustering in different chapters in the following ways. First, the thesis will define the $k$-means or spectral clustering in the corresponding chapters and introduce relevant backgrounds. Second, techniques for improving the clustering quality and speeding up will be introduced separately and described in details. Third, our contribution and innovation will be described and emphasized. After that, experiments will be caried out to verify our algorithms and theoretical results. Finally, the main results will be summarized and the future directions will be forecasted.
 
 Based on my research on the algorithms and theories of $k$-means and spectral clustering, relevant algorithms and theories are further improved. My major contributions are as follows:
-\begin{enumerate}
-	\item A sharper bound for uniform sampling based $k$-means algorithm is proved, a further proof indicate that this algorithm can run in polylogarithmic time given mild assumptions on datasets. Experiments are carried out to verify the theory.
-	\item The classic $k$-means++ algorithm has been extended to weighted $k$-means problem and proofs on the clustering quality are given.
-	\item A sharper bound for kernel $k$-means based spectral clustering algorithm has been proved, MATLAB implementations are given.
-\end{enumerate}
+
+1. A sharper bound for uniform sampling based $k$-means algorithm is proved, a further proof indicate that this algorithm can run in polylogarithmic time given mild assumptions on datasets. Experiments are carried out to verify the theory.
+
+2. The classic $k$-means++ algorithm has been extended to weighted $k$-means problem and proofs on the clustering quality are given.
+
+3. A sharper bound for kernel $k$-means based spectral clustering algorithm has been proved, MATLAB implementations are given.
 
 Our work not only proves the clustering quality of uniform sampling based clustering algorithms, but also validates the balance of this algorithm with experiments. Compared with seeding algorithms, this algorithm boost the clustering quality without spending too much running time. Compared with original no-sampling clustering algorithms, this algorithm speeds up the original algorithms by an order of a magnitude while loses only a little clustering quality. In the future, the algorithm can be applied widely on big data analysis, e.g. de-duplication of databases, community detection, and text mining on big data, etc.
 

@@ -28,11 +28,11 @@
 
 \section{常见聚类算法及评价指标介绍}
 对于聚类来说，没有“万能”算法，即没有任何一种聚类技术(聚类算法)可以普遍适用于揭示各种多维数据集所呈现出来的多种多样的结构\citing{sambasivam2006advanced}。
-因此需要根据不同的数据模式选择不同的聚类算法，有时也会考虑用户的需求而改变算法。下面介绍常见的聚类算法，他们可分为扁平式式聚类（flat clustering）和层次式聚类（hierarchical clustering），示例见图\ref{fig: cluster_taxonomy}。
+因此需要根据不同的数据模式选择不同的聚类算法，有时也会考虑用户的需求而改变算法。下面介绍常见的聚类算法，他们可分为扁平式式聚类（flat clustering）和层次式聚类（hierarchical clustering），示例见图\ref{fig: cluster_taxonomy}，这两者的核心区别是扁平聚类不体现类间关系，层次聚类反映了类的蕴含关系。
 
 \begin{figure}[h]
     \includegraphics[scale=.4]{pic/394318_1_En_9_Fig6_HTML.png}
-    \caption{扁平聚类 vs 层次聚类，核心区别是扁平聚类不体现类间关系，层次聚类反映了类的蕴含关系}
+    \caption{扁平聚类 vs 层次聚类}
     \label{fig: cluster_taxonomy}
 \end{figure}
 
@@ -53,22 +53,35 @@
     \item 对 $F$ 中的每一行作为一个$k$维的样本，共 $n$ 个样本，用$k$-means进行聚类，聚类数为 $k$
     \item 得到类划分
 \end{enumerate}
-实践中谱聚类能够很好处理$k$-means不能处理的非球形数据（比如同心圆、半月牙等），对比效果见图\ref{fig: flat_compare}，这可以从谱聚类的设计准则解释，因为是做图切割，而相似度又有多种非线性的选择，所以聚类的结果就可以实现$k$-means不能做到的非线性划分（$k$-means用欧式距离所以决策边界是线性的）。由于本文研究的就是$k$-means和谱聚类，所以对于他们的详细剖析见第二、三章。
+实践中谱聚类能够很好处理$k$-means不能处理的非球形数据（比如同心圆、半月牙等），对比效果见图\ref{fig: flat_compare}，可以看到谱聚类能够处理$k$-means处理不了的非球形数据，这可以从谱聚类的设计准则解释。因为是做图切割，而相似度又有多种非线性的选择，所以聚类的结果就可以实现$k$-means不能做到的非线性划分（$k$-means用欧式距离所以决策边界是线性的）。由于本文研究的就是$k$-means和谱聚类，所以对于他们的详细剖析见第二、三章。
 
 \begin{figure}[h]
     \includegraphics[scale=0.4]{pic/Comparison-between-K-Means-and-spectral-clustering_W640.jpg}
-    \caption{$k$-means vs 谱聚类，可以看到谱聚类能够处理$k$-means处理不了的非球形数据}
+    \caption{$k$-means vs 谱聚类}
     \label{fig: flat_compare}
 \end{figure}
 
 \subsection{层次聚类}
-尽管扁平聚类的概念更简单，但我们也看到了他们的一些缺点。首先，现实世界中类和类之间是有关系的，比如说灵长类属于哺乳类，这样的蕴含关系，在扁平聚类中这样的类间关系无法体现。其次，拿$k$-means问题来说，我们需要在聚类前指定类的数目$k$，这在现实生活中未必好确定。最后，扁平聚类过程是不确定的（nondeterministic），即聚类结果有随机因素，比如Lloyd算法初始化不同结果就不同。为了解决这些问题，诞生了层次式聚类。顾名思义，层次式聚类得到的类有层级结构，可以用树状图（tree/dendrogram）来表示，如图\ref{fig: hierarchical}所示，他们也不需要指定类的数目，多数层级聚类也是确定的。这些好处的代价就是聚类速度更慢，常用的层级聚类时间复杂度至少是$O(n^2)$。
+尽管扁平聚类的概念更简单，但我们也看到了他们的一些缺点。首先，现实世界中类和类之间是有关系的，比如说灵长类属于哺乳类，这样的蕴含关系，在扁平聚类中这样的类间关系无法体现。其次，拿$k$-means问题来说，我们需要在聚类前指定类的数目$k$，这在现实生活中未必好确定。最后，扁平聚类过程是不确定的（nondeterministic），即聚类结果有随机因素，比如Lloyd算法初始化不同结果就不同。为了解决这些问题，诞生了层次式聚类（hierarchical clustering）。顾名思义，层次式聚类得到的类有层级结构，可以用树状图（tree/dendrogram）来表示，如图\ref{fig: hierarchical}所示，其中图（a）每个字母代表一个数据点，距离越近相似度越高，图（b）中相似的类归并为一个更大的类从而形成一个二叉树，树的根节点在最下面。层次式聚类也不需要指定类的数目，多数层次式聚类也是确定的。这些好处的代价就是聚类速度更慢，常用的层次式聚类时间复杂度至少是$O(n^2)$。
 
+% \begin{figure}[h]
+%     \subfloat[]{\includegraphics[scale=.5]{Clusters.svg.png}}
+%     \hfil
+%     \subfloat[]{\includegraphics[scale=.4]{Hierarchical_clustering_simple_diagram.svg.png}}
+%     \caption{层级聚类图示。（a）示例数据集，每个字母代表一个数据点，距离越近相似度越高；（b）层级聚类后的结果，相似的类归并为一个更大的类从而形成一个二叉树，树的根节点在最下面}
+%     \label{fig: hierarchical}
+% \end{figure}
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[scale=.5]{Clusters.svg.png}}
+    \begin{subfigure}{.38\linewidth}
+        \includegraphics[width=\linewidth]{Clusters.svg.png}
+        \caption{示例数据集}
+    \end{subfigure}
     \hfil
-    \subfloat[]{\includegraphics[scale=.4]{Hierarchical_clustering_simple_diagram.svg.png}}
-    \caption{层级聚类图示。（a）示例数据集，每个字母代表一个数据点，距离越近相似度越高；（b）层级聚类后的结果，相似的类归并为一个更大的类从而形成一个二叉树，树的根节点在最下面}
+    \begin{subfigure}{.47\linewidth}
+        \includegraphics[width=\linewidth]{Hierarchical_clustering_simple_diagram.svg.png}
+        \caption{层级聚类后的结果}
+    \end{subfigure}
+    \caption{层级聚类图示}
     \label{fig: hierarchical}
 \end{figure}
 

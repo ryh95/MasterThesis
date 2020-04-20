@@ -19,10 +19,22 @@
 
 参与实验的算法是算法\ref{alg: uniform_wkk}，其中$\alpha$近似算法是带权kernel $k$-means++，实验基准算法是带权kernel $k$-means++后接带权kernel Lloyd（即算法\ref{alg: uniform_wkk}不采样的版本）。实验中相似度矩阵$A$的构建方式采用了文献\cite{chen2017scalable}的方法，anchor数目是数据点数目的20\%，算法\ref{alg: uniform_wkk}的采样数目也是数据点数目的20\%，两个算法的最大迭代次数都是30。由于随机性，算法\ref{alg: uniform_wkk}和基准算法在每个数据集上都会重复20次，取平均值汇报。Ncut和时间(秒)分别用来评价谱聚类聚类质量和聚类速度。
 
+% \begin{figure}[h]
+%     \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-running_time.jpg}}
+%     \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-Ncuts.jpg}}
+%     \caption{谱聚类结果。（a）聚类所花时间(秒)；（b）谱聚类的Ncut；}
+%     \label{fig: sp-experiments}
+% \end{figure}
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-running_time.jpg}}
-    \subfloat[]{\includegraphics[width=0.5\linewidth]{sp-Ncuts.jpg}}
-    \caption{谱聚类结果。（a）聚类所花时间(秒)；（b）谱聚类的Ncut；}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{sp-running_time.jpg}
+		\caption{聚类所花时间(秒)}
+	\end{subfigure}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{sp-Ncuts.jpg}
+		\caption{谱聚类的Ncut}
+	\end{subfigure}
+    \caption{谱聚类结果}
     \label{fig: sp-experiments}
 \end{figure}
 结果见图\ref{fig: sp-experiments}，从图中我们可以看出，基于采样的方法解决谱聚类的速度比不采样快了20～50倍，非常显著的加速了谱聚类的求解，另一方面，基于采样的方法的聚类质量又没有比不采样差太多，Ncut比不采样大了0.5～2.4，平均下来不超过不采样的25\%，较不采样而言，采样对聚类质量的影响不太显著，这验证了算法\ref{alg: uniform_wkk}在实践中可以又快又好的解决谱聚类问题。图\ref{fig: sp-experiments}中的数据列在表\ref{tab: res_spectral_cls}中。

@@ -130,9 +130,9 @@ h_i^TDh_i = \sum\limits_{j=1}^{n}h_{ij}^2d_j =\frac{1}{vol(A_i)}\sum\limits_{j \
     \label{eq: relax_spectral_clustering}
     \argmin\limits_{H \in \R^{n \times k}} \; tr(H^TLH) \;\; s.t.\;H^TDH=I
 \end{equation*}
-该问题使用拉格朗日乘子法可以求解，解为$D^{-1/2}LD^{-1/2}$的最小的前$k$个特征值，对应的$H$为$D^{-1/2}LD^{-1/2}$的前$k$个特征向量，对$H$的每一行再做聚类，比如$k$-means即可得到最后的聚类结果。除了这里的relaxation外，文献\cite{bie2006fast,bresson2013multiclass,rangapuram2014tight,rangapuram2016graph}分别提出了不同的relaxation方法，不过这里的方法理论上更简单且容易实现所以非常实用，另外，文献\cite{von2007tutorial}对谱聚类给出了一份更细致的教程，感兴趣的读者可以参考，最后我们可以用一个图示来总结谱聚类的过程，见图\ref{fig: SC_illustration}。
+该问题使用拉格朗日乘子法可以求解，解为$D^{-1/2}LD^{-1/2}$的最小的前$k$个特征值，对应的$H$为$D^{-1/2}LD^{-1/2}$的前$k$个特征向量，对$H$的每一行再做聚类，比如$k$-means即可得到最后的聚类结果。除了这里的relaxation外，文献\cite{bie2006fast,bresson2013multiclass,rangapuram2014tight,rangapuram2016graph}分别提出了不同的relaxation方法，不过这里的方法理论上更简单且容易实现所以非常实用，另外，文献\cite{von2007tutorial}对谱聚类给出了一份更细致的教程，感兴趣的读者可以参考，最后我们可以用一个图示来总结谱聚类的过程，见图\ref{fig: SC_illustration}，可以看到谱分解相当于变换了特征，从而能够处理$k$-means处理不了的非线性可分数据。
 \begin{figure}
     \includegraphics[width=0.8\linewidth]{SC_illustration.png}
-    \caption{谱聚类过程图示，可以看到谱分解相当于变换了特征，从而能够处理$k$-means处理不了的非线性可分数据}
+    \caption{谱聚类过程图示}
     \label{fig: SC_illustration}
 \end{figure}

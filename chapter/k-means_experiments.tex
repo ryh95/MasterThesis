@@ -42,12 +42,32 @@
 % remark
 %为什么这么取值？应该用常数近似算法不应该用kmeans++，Lloyd迭代次数是多少？
 算法K-M$\text{C}^2$, Double-K-M$\text{C}^2$和算法\ref{alg: uniform_k-means}的参数如下：Double-K-M$\text{C}^2$和K-M$\text{C}^2$的游走次数$u = 200$，Double-K-M$\text{C}^2$采样量$s = 1.5*\log^2 n$，算法\ref{alg: uniform_k-means}的采样量$s' = 0.7*\log^4 n$，$\alpha$近似算法是Weighted $k$-means++接上Lloyd（在算法\ref{alg: uniform_k-means}中$\alpha$近似算法的权重设为1）。所有数据集的特征都做了标准化（standardize），由于这些算法都有随机性，实验将在每个数据集上重复40次然后汇报平均值。
+% \begin{figure}[h]
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-running-time.jpg}}
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-sum-squared-distances.jpg}} \\
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{real-running-time.jpg}}
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{real-sum-squared-distances.jpg}}
+%     \caption{传统聚类任务的结果。（a）合成数据集上的距离计算次数；（b）合成数据集上的$k$-means目标函数值；（c）真实数据集上的距离计算次数；（d）真实数据集上的$k$-means目标函数值}
+%     \label{fig: kmeans-experiments}
+% \end{figure}
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{syn-sum-squared-distances.jpg}} \\
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{real-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{real-sum-squared-distances.jpg}}
-    \caption{传统聚类任务的结果。（a）合成数据集上的距离计算次数；（b）合成数据集上的$k$-means目标函数值；（c）真实数据集上的距离计算次数；（d）真实数据集上的$k$-means目标函数值}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{syn-running-time.jpg}
+		\caption{合成数据集上的距离计算次数}
+	\end{subfigure}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{syn-sum-squared-distances.jpg}
+		\caption{合成数据集上的$k$-means目标函数值}
+	\end{subfigure} \\
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{real-running-time.jpg}
+		\caption{真实数据集上的距离计算次数}
+	\end{subfigure}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{real-sum-squared-distances.jpg}
+		\caption{真实数据集上的$k$-means目标函数值}
+	\end{subfigure}
+    \caption{传统聚类任务的结果}
     \label{fig: kmeans-experiments}
 \end{figure}
 结果见图\ref{fig: kmeans-experiments}，在三个算法中基于均匀不放回采样的算法有最好的聚类效果而它的时间开销也最大，差不多是K-M$\text{C}^2$时间开销的10倍，不过随着数据量的增加，时间增加缓慢。基于均匀不放回采样的算法的$k$-means目标函数值差不多是K-M$\text{C}^2$的60\%。有意思的是，Double-K-M$\text{C}^2$的结果说明，通过K-M$\text{C}^2$采样一部分点，相比于单纯K-M$\text{C}^2$，我们能获得更好的聚类质量，而Double-K-M$\text{C}^2$的时间花费比均匀不放回要小很多。这说明，如果你倾向于一个好的聚类质量且时间开销也不想太大的话，一个好的选择是Double-K-M$\text{C}^2$，如果追求聚类质量就使用均匀不放回采样。受到特征数目和类数目的影响，$k$-means目标函数值不会随着数据量的增大而增大。图\ref{fig: kmeans-experiments}中的数据列在表\ref{tab:results on synthetic data}中，表中真实数据集上$k$-means目标函数值的数量级是$10^6$，合成数据集和真实数据集的时间开销分别在$10^6$和$10^7$数量级。
@@ -88,13 +108,24 @@ $K \succeq 0$表示$K$是半正定矩阵。由于三个算法只返回$k$个点�
 % remark: weighted kernel kmeans++ for Double KMC^2？num of iterations?
 基于均匀不放回采样的kernel版、kernel K-M$\text{C}^2$和kernel Double-K-M$\text{C}^2$的参数配置如下：均匀不放回的采样数$s' = 0.4*\log^4 n$，kernel $k$-means++是均匀不放回的$\alpha$近似算法，kernel K-M$\text{C}^2$和kernel Double-K-M$\text{C}^2$的游走次数都是200，kernel Double-K-M$\text{C}^2$的采样量是$s = 0.25*\log^2 n$，所有图片的$k$都设为5，所有算法重复30次取平均值。
 
+% \begin{figure}[h]
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{image-running-time.jpg}}
+%     \subfloat[]{\includegraphics[width=0.49\linewidth]{image-obj.jpg}}
+%     \caption{图像分割任务上的结果。（a）图片数据集上的距离计算次数；（b）图片数据集上的kernel $k$-means目标函数值}
+%     \label{fig: image running time & ncut}
+% \end{figure}
 \begin{figure}[h]
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{image-running-time.jpg}}
-    \subfloat[]{\includegraphics[width=0.49\linewidth]{image-obj.jpg}}
-    \caption{图像分割任务上的结果。（a）图片数据集上的距离计算次数；（b）图片数据集上的kernel $k$-means目标函数值}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{image-running-time.jpg}
+		\caption{图片数据集上的距离计算次数}
+	\end{subfigure}
+	\begin{subfigure}{.47\linewidth}
+		\includegraphics[width=\linewidth]{image-obj.jpg}
+		\caption{图片数据集上的kernel $k$-means目标函数值}
+	\end{subfigure}
+    \caption{图像分割任务上的结果}
     \label{fig: image running time & ncut}
 \end{figure}
-
 % remark: 描述不量化，加上分割的图片的图，
 图像分割实验结果见图\ref{fig: image running time & ncut}。实验结论和传统聚类的差不多，kernel版的均匀不放回采样有最好的聚类质量，而时间增长的趋势并不是很快，kernel Double-K-M$\text{C}^2$比均匀不放回在聚类质量上稍微差一点但是时间少了很多，kernel K-M$\text{C}^2$有最快的速度但是聚类质量太差。因此，如果你想要一个折中的平衡算法，kernel Double-K-M$\text{C}^2$是一个好的选择，如果你更关心效率，选择kernel K-M$\text{C}^2$。图\ref{fig: image running time & ncut}中的数据列在表\ref{tab:results on image segmentation}中，目标函数值的量级是$10^4$，时间开销的量级是$10^4$。
 \begin{table}[h]

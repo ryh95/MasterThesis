@@ -111,8 +111,8 @@
 \graphicspath{{./pic/}}
 
 \RequirePackage[titles]{tocloft}
-\RequirePackage[labelformat=simple]{subfig}
-\captionsetup[subfigure]{font=small, belowskip=6pt, width=36pt}
+\RequirePackage[labelformat=simple]{subcaption}
+\captionsetup[subfigure]{font=small, belowskip=6pt}
 \renewcommand{\thesubfigure}{(\alph{subfigure})}
 \newcommand{\floatcontinue}{\end{figure}\clearpage\begin{figure}[tb]\ContinuedFloat}
 
