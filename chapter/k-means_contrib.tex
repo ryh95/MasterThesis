@@ -1,5 +1,8 @@
-\section{基于均匀采样算法的新理论结果}
+\section{我的贡献}
+
+% \subsubsection{基于均匀采样算法的新理论结果}
 在上一节，我们看到基于均匀采样的算法\ref{alg: uniform_k-means}能够有常数近似系数，然而该算法的采样点可能由于数据直径大而很多。本节我们首先证明算法\ref{alg: uniform_k-means}可以取得更加紧的理论界，同时利用数据假设让采样点数目在多项式对数级别，从而在多项式对数时间内，获得常数近似系数的解。
+
 \subsection{基于均匀采样的更紧理论界}
 我们首先给出结果再证明
 \begin{theorem}[均匀不放回采样的解的质量2]
@@ -163,7 +166,7 @@
     根据引理\ref{lem: Delta/m}，定理\ref{theo: uniform_k-means_sharper}，和式(\ref{eq: poly log1})，命题得证。
 \end{proof}
 
-\section{带权\texorpdfstring{$k$}{k}-means++}
+\subsection{带权\texorpdfstring{$k$}{k}-means++}
 在前面的算法\ref{alg: kmeans||_seeding}和\ref{alg: reduce_k-means2}中，都需要解决带权$k$-means问题，本小节我们将$k$-means++算法扩展到了带权重$k$-means问题上，并证明了这一算法有$O(\log k)$的近似系数。首先，带权$k$-means++算法见算法\ref{alg: weighted Kmeans++ seeding}。
 \begin{algorithm}
     \caption{weighted $k$-means++ seeding}\label{alg: weighted Kmeans++ seeding}
@@ -238,7 +241,7 @@
 这个引理说明均匀采样一个点，点所在的类到这个点的距离平方和不会比最优的差2倍。换句话说，如果每次都能选择到不同的类，在这个类里面均匀采样的话最后的近似系数就是2，可惜我们没有办法让每次seed的点落在不同的类，所以才提出了$k$-means++算法。那么基于$d^2$ weighting采样产生的点，点所在的类到这个点的距离平方和不会比最优的差几倍呢？我们用下个引理回答这个问题。
 \begin{lemma}
     \label{lem: 8OPT_A}
-    令$C$是$k$-means++ seeding的任意中间结果，$1 \leq |C| \leq k$，记$Z \in A$是在给定$C$的情况下依照$d^2$ weighting采样的点，$A$是任意一个最优类，记$C' = C \cup \{Z\}$，则可以得到
+    令$C$是$k$-means++ seeding的任意中间结果，$1 \leq |C| \leq k-1$，记$Z \in A$是在给定$C$的情况下依照$d^2$ weighting采样的点，$A$是任意一个最优类，记$C' = C \cup \{Z\}$，则可以得到
     \begin{equation}
         \E[\psi_{C'}(A)|C,Z \in A] \leq 8 \psi_{\text{OPT}}(A)
     \end{equation}

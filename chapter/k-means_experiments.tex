@@ -1,4 +1,4 @@
-\section{实验}
+\subsection{实验}
 在“基于均匀采样算法的新理论结果”一节中，我们证明了基于均匀不放回采样的算法\ref{alg: uniform_k-means}有更紧的理论界且在一定的数据假设下可以在多项式对数时间复杂度下取得常数近似的解。在本节，我们设计实验验证这一点，接受测试的基准算法分别是K-M$\text{C}^2$(算法\ref{alg:K-MC^2 seeding})和我们提出的一个新加速算法Double-K-M$\text{C}^2$，这一新算法描述见算法\ref{alg:Re-K-MC sampling}，它的定位是在聚类质量和时间复杂度上位于均匀不放回采样和K-M$\text{C}^2$采样之间。这一算法提出的初衷是为了估算算法\ref{alg: reduce_k-means2}中点$s_i$上的权重$w_i$。容易知道计算准确权重需要$O(nsd)$的时间复杂度，大数据下时间复杂度太高，因此，新想法是利用一种采样算法，比如K-M$\text{C}^2$来估算权重，减少时间开销，$w_i + 1$是为了解决有的$w_i$可能是0的问题，Double-K-M$\text{C}^2$中采样部分的时间复杂度是$O(us^2 d)$，而用K-M$\text{C}^2$做基准是因为K-M$\text{C}^2$也用到了前述的假设1和2。
 % remark：
 % 估算方法不太对，应该乘以n/s，用Double-K-M$\text{C}^2$做基准必要性不强
@@ -15,7 +15,7 @@
 \end{algorithm}
 这三个算法将会在八个传统聚类数据集上测试，验证他们的聚类质量和效率。另外，我们也用一个重要的实际应用-图像分割-来测试他们。在这两个任务上，结果都显示基于均匀不放回采样的算法和Double-K-M$\text{C}^2$比K-M$\text{C}^2$有更好的聚类质量而花费的时间相比K-M$\text{C}^2$又不会多太多。
 
-\subsection{传统聚类}
+\subsubsection{传统聚类}
 
 \begin{table}[h]
 	\caption{数据量$n$, 类数目$k$, 维度$d$}
@@ -93,7 +93,7 @@
 	\end{tabular}
 \end{table}
 
-\subsection{图像分割}
+\subsubsection{图像分割}
 聚类的一个应用就是图像分割，这个应用要求对图像的不同的区块进行准确的、光滑的划分，这一应用给聚类算法聚类的质量提供了一个直观的展示。由于图像不同区块的边界不是线性的，所以需要修改$k$-means的目标函数（$k$-means划分的边界是线性的），这里我们将三个算法扩展到他们对应的kernel版本。kernel $K$由以下方法构建，首先，用文献\cite{stella2003multiclass}的方法构建相似度矩阵$A$，接着，寻找一个离$A$最近的半正定矩阵$K$作为kernel，这里近与远用矩阵的Frobenius范数来度量，即求解
 \begin{equation}
 	\begin{aligned}
