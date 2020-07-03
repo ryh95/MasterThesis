@@ -1,19 +1,18 @@
 
 \begin{englishabstract}
-	With the rapid development of the information technology, areas like Mobile Internet and Internet of Things are
-growing fast. Driven by these areas, more and more data has been generated and large amounts of data need to be processed.
-Hence, data mining is becoming more and more important under this big data scenario. As a crucial data mining technique,
-clustering has been studied over the past few decades. The unsupervised nature of clustering is favoured by researchers in the era of big data. Among all the clustering problems, the $k$-means could be the most well-known one. This problem is easy to comprehend and relevant algorithms are easy to implement. It is classic in the big data analysis. On the other hand, since the decision boundary of $k$-means is linear, the spectral clustering problem has been proposed. Due to the more flexible similarity construction and spectral decomposition, original data points can be separated in the eigenspace more easily. As a consequence of excellent clustering performance, spectral clustering is also a hot topic in big data analysis.
-	
-Unfortunately, both clustering problems are NP-hard. Hence, we could only use approximate algorithms on big data. How to improve the clustering quality and speed up the clustering procedure on the big data are two key problems. This thesis will investigate these two problems on the $k$-means and the spectral clustering in different chapters in the following ways. First, the thesis will define the $k$-means or spectral clustering in the corresponding chapters and introduce relevant backgrounds. Second, techniques for improving the clustering quality and speeding up will be introduced separately and described in details. Third, our contribution and innovation will be described and emphasized. After that, experiments will be carried out to verify our algorithms and theoretical results. Finally, the main results will be summarized and the future directions will be forecasted.
+As a crucial data mining technique, clustering has been studied widely over the past few decades. The unsupervised nature of clustering is favored by researchers in the era of big data. Among all the clustering problems, the $k$-means problem and spectral clustering problem could be the two most well-known problems. However, both clustering problems are NP-hard. Hence, we could only use approximate algorithms on big data. How to improve the clustering quality and speed up the clustering procedure are two key problems of $k$-means and spectral clustering. This thesis will investigate these two problems on the $k$-means and spectral clustering in different chapters in the following ways. First, the thesis will define the $k$-means or spectral clustering in the corresponding chapters and introduce relevant backgrounds. Second, techniques for improving the clustering quality and speeding up will be introduced separately and described in details. Third, our contribution and innovation will be described and emphasized. After that, experiments will be carried out to verify our algorithms and theoretical results. Finally, the main results will be summarized and the future directions will be forecasted.
 
 Based on my research on the algorithms and theories of $k$-means and spectral clustering, relevant algorithms and theories are further improved. My major contributions are as follows:
 
-1. A sharper bound for the uniform-sampling based $k$-means algorithm is proved, and a further proof indicates that this algorithm runs in polylogarithmic time given mild assumptions on datasets. Experiments are carried out to verify the theory.
+1. A sharper bound for the uniform-sampling based $k$-means algorithm is proved, and a further proof indicates that this algorithm runs in polylogarithmic time given mild assumptions on datasets.
 
 2. The classic $k$-means++ algorithm has been extended to weighted $k$-means problem and proofs on the clustering quality are given.
 
-3. A sharper bound for weighted kernel $k$-means based spectral clustering algorithm has been proved, and MATLAB implementations are given.
+3. A sharper bound for weighted kernel $k$-means based spectral clustering algorithm has been proved.
+
+4. MATLAB implementations of uniform sampling, K-M$\text{C}^2$, Double-K-M$\text{C}^2$ and their corresponding kernel versions on the $k$-means problem are given and experiments validate the efficiency and effectiveness of these algorithms.
+
+5. MATLAB implementations of weighted kernel $k$-means based spectral clustering and its uniform sampling versions are given and experiments illustrate the efficiency and the reasonable clustering quality of this sampling version.
 
 Our work not only proves the clustering quality of the uniform-sampling based clustering algorithm but also validates the quality-efficiency balance of this algorithm with experiments. Compared with seeding algorithms, this algorithm boosts the clustering quality without spending too much running time. Compared with original no-sampling clustering algorithms, this algorithm speeds up the original algorithms by an order of magnitude while loses only a little clustering quality. In the future, the algorithm can be applied widely on big data analysis, e.g. de-duplication of databases, community detection, and text mining on big data, etc.
 

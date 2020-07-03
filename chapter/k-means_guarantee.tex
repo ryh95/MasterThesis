@@ -170,7 +170,7 @@ $O(n^3)$，能否将这两种算法结合起来得到一个既有常数近似又
 \begin{equation}
 \zeta(\mathcal{X}) = \max\limits_{x \in \mathcal{X}}\frac{d(x,\mu(\mathcal{X}))^2}{\sum_{x' \in \mathcal{X}}d(x',\mu(\mathcal{X}))^2}, \eta(\mathcal{X}) = \frac{\varphi(\mathcal{X},C_{\text{OPT}_1}^{\mathcal{X}})}{\varphi(\mathcal{X},C_{\text{OPT}_k}^{\mathcal{X}})}
 \end{equation}
-假定数据是从生成数据的分布$F$中独立同分布的采样出来的，且该分布满足以下两个假设，如果满足这些假设的话$\zeta(\mathcal{X})$和
+假定数据是从生成数据的分布$F$中独立同分布的采样出来的，且该分布满足以下两个温和的假设，如果满足这些假设的话$\zeta(\mathcal{X})$和
 $\eta(\mathcal{X})$就可以被限定住，游走就能很快收敛到平稳分布
 
 \textbf{假设1} 分布$F$的尾部是指数衰减的，即$\exists c,t $使得$P[d(x,\mu(F))>a]\leq ce^{-at}$，其中$x\sim F$ 
