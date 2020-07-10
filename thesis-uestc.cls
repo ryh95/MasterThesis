@@ -71,6 +71,7 @@
 \fi
 
 \DeclareMathAlphabet{\mathbf}{\eu@enc}{\eu@mathrm}{\bfdefault}{it}
+\DeclareMathAlphabet{\mathbd}{\eu@enc}{\eu@mathrm}{\bfdefault}{n}
 \newcommand{\bm}{\mathbf}
 
 \RequirePackage{zhnumber}
@@ -120,6 +121,8 @@
 \urlstyle{rm}
 \raggedbottom
 
+% \AtBeginDocument{\pretocmd{\ref}{~}{}{}\apptocmd{\ref}{}{}{}}
+
 \newcommand{\thesistablelist}{
   \listoftables
 }
@@ -152,12 +155,12 @@
 
 \setlength{\intextsep}{9pt}
 
-\AtBeginEnvironment{figure}{
-  \def\@floatboxreset{\centering}
+\AtBeginEnvironment{figure}{%
+  \def\@floatboxreset{\centering}%
 }
 
-\AtBeginEnvironment{table}{
-  \def\@floatboxreset{\centering}
+\AtBeginEnvironment{table}{%
+  \def\@floatboxreset{\centering}%
 }
 
 \AtBeginEnvironment{tabular}{\small}
@@ -273,8 +276,7 @@
 \newcommand{\chinesekeyword}[1]{
   \vspace{\baselineskip}
   \noindent
-  \parbox[t]{48pt}{\textbf{关键词\chinesecolon}}
-  \parbox[t]{\linewidth - 48pt}{#1}
+  \@hangfrom{\makebox[48pt][l]{\textbf{关键词\chinesecolon}}}#1
 }
 
 \newenvironment{englishabstract}{
@@ -300,8 +302,7 @@
 \newcommand{\englishkeyword}[1]{
   \vspace{\baselineskip}
   \noindent
-  \parbox[t]{2.1cm}{\textbf{Keywords:}}
-  \parbox[t]{\linewidth - 2.1cm}{#1}
+  \@hangfrom{\makebox[2.1cm][l]{\textbf{Keywords:}}}#1
 }
 
 \AddEverypageHook{\addtocontents{toc}{
@@ -385,6 +386,22 @@
   \renewcommand{\thestudentnumber}{#1}
 }
 
+\newcommand{\thedateoral}{}
+\newcommand{\thedatesubmit}{}
+\newcommand{\thedateconfer}{年\chinesespace 月}
+
+\newcommand{\setdate}[2][]{ 
+\ifthenelse{\equal{#1}{oral}}{
+  \renewcommand{\thedateoral}{#2}
+}{}
+\ifthenelse{\equal{#1}{submit}}{
+  \renewcommand{\thedatesubmit}{#2}
+}{}
+\ifthenelse{\equal{#1}{confer}}{
+  \renewcommand{\thedateconfer}{#2}
+}{}
+}
+
 \renewcommand{\strong}{\heiti}
 \DeclareOption{english} {
   \newcommand{\englishbook}{}
@@ -402,6 +419,7 @@
   \def\englishdegreename{Bachelor}
   \def\chinesebooktitle{学士学位论文}
   \def\englishbooktitle{Bachelor Thesis}
+  \def\display@chineseheader{电子科技大学学士学位论文}
   \def\display@englishheader{Bachelor Thesis of University of
     Electronic Science and Technology of China}
 }
@@ -415,6 +433,7 @@
   \def\englishdegreename{Master}
   \def\chinesebooktitle{硕士学位论文}
   \def\englishbooktitle{Master Thesis}
+  \def\display@chineseheader{电子科技大学硕士学位论文}
   \def\display@englishheader{Master Thesis of University of
     Electronic Science and Technology of China}
 }
@@ -424,6 +443,7 @@
   \def\englishdegreename{Professional Master}
   \def\chinesebooktitle{专业学位硕士学位论文}
   \def\englishbooktitle{Master Thesis for Professional Degree}
+  \def\display@chineseheader{电子科技大学硕士学位论文}
   \def\display@englishheader{Professional Master Thesis of University 
     of Electronic Science and Technology of China}
 }
@@ -433,6 +453,7 @@
   \def\englishdegreename{Doctor}
   \def\chinesebooktitle{博士学位论文}
   \def\englishbooktitle{Doctoral Dissertation}
+  \def\display@chineseheader{电子科技大学博士学位论文}
   \def\display@englishheader{Doctoral Dissertation of University of
     Electronic Science and Technology of China}
 }
@@ -442,6 +463,7 @@
   \def\englishdegreename{Engineering Doctor}
   \def\chinesebooktitle{工程博士学位论文}
   \def\englishbooktitle{Engineering Doctoral Dissertation}
+  \def\display@chineseheader{电子科技大学博士学位论文}
   \def\display@englishheader{Engineering Doctoral Dissertation of
     University of Electronic Science and Technology of China}
 }
@@ -586,16 +608,16 @@
     \vspace{0.5cm}
     \includegraphics[width=5cm]{logo.pdf} \\[66bp]
   }{\includegraphics[width=221bp]{logo.pdf} \\[48bp]}
-  \begin{tabular}{lp{4.6in}p{36pt}}
+  \begin{tabular}{lp{4.6in}}
     \heiti\fontsize{16pt}{16pt}\selectfont 论文题目 & \multirow[t]{2}{4.6in}{
         \centering
           \heiti\fontsize{16pt}{19pt}\selectfont
           \zh@thetitle
-    } & \\
+    } \\
     \cline{2-2}
             & \\
     \cline{2-2}
-  \end{tabular} \\[\baselineskip]
+  \end{tabular}\hspace*{\fill} \\[\baselineskip]
   \begin{tabular}{>{\heiti\fontsize{16pt}{16pt}\selectfont}l
       >{\centering\arraybackslash\heiti\fontsize{16pt}{16pt}\selectfont}
       p{3.77in}p{15pt}}
@@ -668,15 +690,15 @@ UDC\textsuperscript{ 注1} \uline{\hspace{2.5in}} \\[12bp]
       >{\fontsize{12pt}{12pt}\selectfont}l
       >{\centering\arraybackslash\fontsize{16pt}{16pt}\heiti\selectfont}
       p{2.0in}}
-      提交论文日期 &  &
-      论文答辩日期 & \\
+      提交论文日期 & \thedatesubmit &
+      论文答辩日期 & \thedateoral \\
     \cline{2-2}
     \cline{4-4}
   \end{tabular} \\
   \begin{tabular}{>{\fontsize{12pt}{12pt}\selectfont}l
       >{\centering\arraybackslash\fontsize{16pt}{16pt}\heiti\selectfont}
       p{3.97in}}
-      学位授予单位和日期 & 电子科技大学\chinesespace 年\chinesespace 月 \\
+      学位授予单位和日期 & 电子科技大学\chinesespace{} \thedateconfer \\
     \cline{2-2}
   \end{tabular} \\
   \begin{tabular}{>{\fontsize{12pt}{12pt}\selectfont}l
@@ -745,7 +767,7 @@ School: & \en@theschool \\
   \noindent\begin{center}
   \fontsize{18pt}{20pt}\selectfont\heiti 独创性声明
   \end{center}
-    \par{\fontsize{14pt}{16pt}\selectfont\noindent\null\hspace{28pt}
+    \par{\fontsize{14pt}{16pt}\selectfont\noindent\null\hspace{28pt}%
     本人声明所呈交的学位论文是本人在导师指导下进行的研究工作及取得的研究成果。%
     据我所知，除了文中特别加以标注和致谢的地方外，论文中不包含其他人已经发表或撰写过的研究成果，%
     也不包含为获得电子科技大学或其它教育机构的学位或证书而使用过的材料。%
@@ -777,7 +799,7 @@ School: & \en@theschool \\
 \newcommand{\standardhead}{
   \fancyhf{}
   \ifchinesebook{
-    \fancyhead[CE]{\fontsize{10.5pt}{12.6pt}\selectfont 电子科技大学\chinesebooktitle}
+    \fancyhead[CE]{\fontsize{10.5pt}{12.6pt}\selectfont\display@chineseheader}
     \fancyhead[CO]{\fontsize{10.5pt}{12.6pt}\selectfont\leftmark}
   }{
     \fancyhead[CE]{\fontsize{10.5pt}{12.6pt}\selectfont\nouppercase\display@englishheader}
